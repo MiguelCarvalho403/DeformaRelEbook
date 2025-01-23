@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html><head>
+<title></title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+<style>
+
+    body { margin: 0px; overflow: hidden; }
+
+    #menu-container { position: absolute; bottom: 30px; right: 40px; cursor: default; }
+
+    #menu-message { position: absolute; bottom: 0px; right: 0px; white-space: nowrap;
+                    display: none; background-color: #F5F5F5; padding: 10px; }
+
+    #menu-content { position: absolute; bottom: 0px; right: 0px;
+                    display: none; background-color: #F5F5F5; border-bottom: 1px solid black;
+                    border-right: 1px solid black; border-left: 1px solid black; }
+
+    #menu-content div { border-top: 1px solid black; padding: 10px; white-space: nowrap; }
+
+    #menu-content div:hover { background-color: #FEFEFE; }
+
+    .dark-theme #menu-container { color: white; }
+
+    .dark-theme #menu-message { background-color: #181818; }
+
+    .dark-theme #menu-content { background-color: #181818; border-color: white; }
+
+    .dark-theme #menu-content div { border-color: white; }
+
+    .dark-theme #menu-content div:hover { background-color: #303030; }
+
+</style>
+<style>/* animation.css */
+
+#animation-ui {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+#animation-ui .tick-marks {
+    height: 6px;
+    margin-bottom: 6px;
+    margin-left: 6px; /* Take into account the slider knob/thumb's width. */
+    margin-right: 5px; /* Same, but save a pixel for the last tick mark. */
+    background-image: repeating-linear-gradient(
+        to right,
+        darkgray 0 1px, /* Make each tick 1px wide. */
+        /* -1px here because of that extra pixel on the right margin */
+        transparent 1px calc((100% - 1px) / 6)
+    );
+}
+
+#animation-ui,
+#animation-ui .buttons {
+    font-size: 0; /* hack to ignore white-space between inline-block elements */
+}
+
+#animation-ui button {
+    display: inline-block;
+    margin: 0;
+    padding: 2px;
+    width: 28px;
+    height: 28px;
+    background: none;
+    border: none;
+    border-radius: 28px;
+    cursor: pointer;
+}
+.dark-theme #animation-ui button {
+    padding: 1px;
+    border: 1px dotted black;
+}
+
+#animation-ui button:focus {
+    background: #b8b9ff;
+    outline: none;
+}
+.dark-theme #animation-ui button:focus {
+    background: none;
+    border-color: white;
+}
+
+/* Setting the outline to none isn't enough for Firefox. */
+#animation-ui button::-moz-focus-inner {
+    border: none;
+}
+
+#animation-ui button:active {
+    background: #efefff;
+}
+.dark-theme #animation-ui button:active {
+    background: #303030;
+    border-style: solid;
+}
+
+#animation-ui.playing .play,
+#animation-ui.paused .pause,
+#animation-ui.loop .once,
+#animation-ui.once .loop {
+    display: none;
+}
+
+/*
+Slider styled using range.css tool by Daniel Stern
+   http://danielstern.ca/range.css/#/
+   Generated April 24, 2020
+Customizations:
+    - darker focus color
+    - focused styling for Firefox.
+*/
+input[type=range].slider {
+    -webkit-appearance: none;
+    width: 100%;
+    margin: 0px 0;
+}
+input[type=range].slider:focus {
+    outline: none;
+}
+input[type=range].slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #efefff;
+    border-radius: 6px;
+    border: 0px solid #000000;
+}
+input[type=range].slider::-webkit-slider-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+    background: #3131ff;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: 0px;
+}
+input[type=range].slider:focus::-webkit-slider-runnable-track {
+    background: #b8b9f6;
+}
+input[type=range].slider::-moz-range-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    background: #efefff;
+    border-radius: 6px;
+    border: 0px solid #000000;
+}
+input[type=range].slider::-moz-range-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+    background: #3131ff;
+    cursor: pointer;
+}
+input[type=range].slider:focus::-moz-range-track {
+    background: #b8b9f6;
+}
+input[type=range].slider::-moz-focus-outer {
+    border: none;
+}
+input[type=range].slider::-ms-track {
+    width: 100%;
+    height: 12px;
+    cursor: pointer;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+input[type=range].slider::-ms-fill-lower {
+    background: #efefff;
+    border: 0px solid #000000;
+    border-radius: 6px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range].slider::-ms-fill-upper {
+    background: #efefff;
+    border: 0px solid #000000;
+    border-radius: 6px;
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+}
+input[type=range].slider::-ms-thumb {
+    box-shadow: 0px 0px 0px #000000, 0px 0px 0px #0d0d0d;
+    border: 0px solid #000000;
+    width: 12px;
+    border-radius: 6px;
+    background: #3131ff;
+    cursor: pointer;
+    height: 12px;
+}
+input[type=range].slider:focus::-ms-fill-lower {
+    background: #b8b9f6;
+}
+input[type=range].slider:focus::-ms-fill-upper {
+    background: #b8b9f6;
+}
+
+.dark-theme input[type=range].slider {
+    background: black;
+}
+.dark-theme input[type=range].slider::-webkit-slider-runnable-track {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-webkit-slider-thumb {
+    border: 1px dotted white;
+}
+.dark-theme input[type=range].slider::-moz-range-track {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-moz-range-thumb {
+    border: 1px dotted white;
+}
+.dark-theme input[type=range].slider::-ms-fill-lower {
+    background: #303030;
+}
+.dark-theme input[type=range].slider::-ms-fill-upper {
+    background: #303030;
+}
+.dark-theme input[type=range].slider:focus::-ms-thumb {
+    border: 1px dotted white;
+}
+</style>
+<script bis_use="true" type="text/javascript" charset="utf-8" data-bis-config="[&quot;facebook.com/&quot;,&quot;twitter.com/&quot;,&quot;youtube-nocookie.com/embed/&quot;,&quot;//vk.com/&quot;,&quot;//www.vk.com/&quot;,&quot;linkedin.com/&quot;,&quot;//www.linkedin.com/&quot;,&quot;//instagram.com/&quot;,&quot;//www.instagram.com/&quot;,&quot;//www.google.com/recaptcha/api2/&quot;,&quot;//hangouts.google.com/webchat/&quot;,&quot;//www.google.com/calendar/&quot;,&quot;//www.google.com/maps/embed&quot;,&quot;spotify.com/&quot;,&quot;soundcloud.com/&quot;,&quot;//player.vimeo.com/&quot;,&quot;//disqus.com/&quot;,&quot;//tgwidget.com/&quot;,&quot;//js.driftt.com/&quot;,&quot;friends2follow.com&quot;,&quot;/widget&quot;,&quot;login&quot;,&quot;//video.bigmir.net/&quot;,&quot;blogger.com&quot;,&quot;//smartlock.google.com/&quot;,&quot;//keep.google.com/&quot;,&quot;/web.tolstoycomments.com/&quot;,&quot;moz-extension://&quot;,&quot;chrome-extension://&quot;,&quot;/auth/&quot;,&quot;//analytics.google.com/&quot;,&quot;adclarity.com&quot;,&quot;paddle.com/checkout&quot;,&quot;hcaptcha.com&quot;,&quot;recaptcha.net&quot;,&quot;2captcha.com&quot;,&quot;accounts.google.com&quot;,&quot;www.google.com/shopping/customerreviews&quot;,&quot;buy.tinypass.com&quot;,&quot;gstatic.com&quot;,&quot;secureir.ebaystatic.com&quot;,&quot;docs.google.com&quot;,&quot;contacts.google.com&quot;,&quot;github.com&quot;,&quot;mail.google.com&quot;,&quot;chat.google.com&quot;,&quot;audio.xpleer.com&quot;,&quot;keepa.com&quot;,&quot;static.xx.fbcdn.net&quot;,&quot;sas.selleramp.com&quot;,&quot;1plus1.video&quot;,&quot;console.googletagservices.com&quot;,&quot;//lnkd.demdex.net/&quot;,&quot;//radar.cedexis.com/&quot;,&quot;//li.protechts.net/&quot;,&quot;challenges.cloudflare.com/&quot;,&quot;ogs.google.com&quot;]" src="chrome-extension://eppiocemhmnlbhjplcgkofciiegomcon/../executers/vi-tr.js"></script></head>
+
+<body bis_status="ok" bis_frame_id="1798">
+
+<script src="/nbextensions/threejs-sage/r122/three.min.js"></script>
+<script>
+  if ( !window.THREE ) document.write(' \
+<script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@r122/build/three.min.js"><\/script> \
+            ');
+</script> <script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@r122/build/three.min.js"></script>             
+        
+<script>
+
+    var options = {"animate": true, "animationControls": true, "aspectRatio": [1.0, 1.0, 1.0], "autoPlay": false, "axes": false, "axesLabels": false, "axesLabelsStyle": null, "decimals": 2, "delay": 20, "frame": false, "loop": true, "projection": "perspective", "theme": "light", "viewpoint": false};
+    var animate = options.animate;
+
+    if ( options.theme === 'dark' )
+        document.body.className = 'dark-theme';
+
+    var scene = new THREE.Scene();
+
+    var renderer = new THREE.WebGLRenderer( { antialias: true, preserveDrawingBuffer: true } );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.setClearColor( options.theme === 'dark' ? 0 : 0xffffff, 1 );
+    document.body.appendChild( renderer.domElement );
+
+    var b = [{"x":-2.0, "y":-2.0, "z":-2.0}, {"x":2.2, "y":2.2, "z":2.2}]; // bounds
+
+    if ( b[0].x === b[1].x ) {
+        b[0].x -= 1;
+        b[1].x += 1;
+    }
+    if ( b[0].y === b[1].y ) {
+        b[0].y -= 1;
+        b[1].y += 1;
+    }
+    if ( b[0].z === b[1].z ) {
+        b[0].z -= 1;
+        b[1].z += 1;
+    }
+
+    var rRange = Math.sqrt( Math.pow( b[1].x - b[0].x, 2 )
+                            + Math.pow( b[1].y - b[0].y, 2 ) );
+    var xRange = b[1].x - b[0].x;
+    var yRange = b[1].y - b[0].y;
+    var zRange = b[1].z - b[0].z;
+
+    var ar = options.aspectRatio;
+    var a = [ ar[0], ar[1], ar[2] ]; // aspect multipliers
+    var autoAspect = 2.5;
+    if ( zRange > autoAspect * rRange && a[2] === 1 ) a[2] = autoAspect * rRange / zRange;
+
+    // Distance from (xMid,yMid,zMid) to any corner of the bounding box, after applying aspectRatio
+    var midToCorner = Math.sqrt( a[0]*a[0]*xRange*xRange + a[1]*a[1]*yRange*yRange + a[2]*a[2]*zRange*zRange ) / 2;
+
+    var xMid = ( b[0].x + b[1].x ) / 2;
+    var yMid = ( b[0].y + b[1].y ) / 2;
+    var zMid = ( b[0].z + b[1].z ) / 2;
+
+    var box = new THREE.Geometry();
+    box.vertices.push( new THREE.Vector3( a[0]*b[0].x, a[1]*b[0].y, a[2]*b[0].z ) );
+    box.vertices.push( new THREE.Vector3( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) );
+    var boxMesh = new THREE.Line( box );
+    var boxColor = options.theme === 'dark' ? 'white' : 'black';
+    if ( options.frame ) scene.add( new THREE.BoxHelper( boxMesh, boxColor ) );
+
+    if ( options.axesLabels ) {
+
+        var d = options.decimals; // decimals
+        var offsetRatio = 0.1;
+        var al = options.axesLabels;
+        var als = options.axesLabelsStyle || [{}, {}, {}];
+
+        var offset = offsetRatio * a[1]*( b[1].y - b[0].y );
+        var xm = xMid.toFixed(d);
+        if ( /^-0.?0*$/.test(xm) ) xm = xm.substr(1);
+        addLabel( al[0] + '=' + xm, a[0]*xMid, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+        addLabel( ( b[0].x ).toFixed(d), a[0]*b[0].x, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+        addLabel( ( b[1].x ).toFixed(d), a[0]*b[1].x, a[1]*b[1].y+offset, a[2]*b[0].z, als[0] );
+
+        var offset = offsetRatio * a[0]*( b[1].x - b[0].x );
+        var ym = yMid.toFixed(d);
+        if ( /^-0.?0*$/.test(ym) ) ym = ym.substr(1);
+        addLabel( al[1] + '=' + ym, a[0]*b[1].x+offset, a[1]*yMid, a[2]*b[0].z, als[1] );
+        addLabel( ( b[0].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[0].y, a[2]*b[0].z, als[1] );
+        addLabel( ( b[1].y ).toFixed(d), a[0]*b[1].x+offset, a[1]*b[1].y, a[2]*b[0].z, als[1] );
+
+        var offset = offsetRatio * a[1]*( b[1].y - b[0].y );
+        var zm = zMid.toFixed(d);
+        if ( /^-0.?0*$/.test(zm) ) zm = zm.substr(1);
+        addLabel( al[2] + '=' + zm, a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*zMid, als[2] );
+        addLabel( ( b[0].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[0].z, als[2] );
+        addLabel( ( b[1].z ).toFixed(d), a[0]*b[1].x, a[1]*b[0].y-offset, a[2]*b[1].z, als[2] );
+
+    }
+
+    function addLabel( text, x, y, z, style ) {
+
+        var color = style.color || 'black';
+        var fontSize = style.fontSize || 14;
+        var fontFamily = style.fontFamily || 'monospace';
+        var fontStyle = style.fontStyle || 'normal';
+        var fontWeight = style.fontWeight || 'normal';
+        var opacity = style.opacity || 1;
+
+        if ( options.theme === 'dark' )
+            if ( color === 'black' || color === '#000000' )
+                color = 'white';
+
+        if ( Array.isArray( fontStyle ) ) {
+            fontFamily = fontFamily.map( function( f ) {
+                // Need to put quotes around fonts that have whitespace in their names.
+                return /\s/.test( f ) ? '"' + f + '"' : f;
+            }).join(', ');
+        }
+
+        var canvas = document.createElement( 'canvas' );
+        var context = canvas.getContext( '2d' );
+        var pixelRatio = Math.round( window.devicePixelRatio );
+
+        // For example: italic bold 20px "Times New Roman", Georgia, serif
+        var font = [fontStyle, fontWeight, fontSize + 'px', fontFamily].join(' ');
+
+        context.font = font;
+        var width = context.measureText( text ).width;
+        var height = fontSize;
+
+        // The dimensions of the canvas's underlying image data need to be powers
+        // of two in order for the resulting texture to support mipmapping.
+        canvas.width = THREE.MathUtils.ceilPowerOfTwo( width * pixelRatio );
+        canvas.height = THREE.MathUtils.ceilPowerOfTwo( height * pixelRatio );
+
+        // Re-compute the unscaled dimensions after the power of two conversion.
+        width = canvas.width / pixelRatio;
+        height = canvas.height / pixelRatio;
+
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+
+        context.scale( pixelRatio, pixelRatio );
+        context.fillStyle = color;
+        context.font = font; // Must be set again after measureText.
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText( text, width/2, height/2 );
+
+        var texture = new THREE.Texture( canvas );
+        texture.needsUpdate = true;
+
+        var materialOptions = { map: texture, sizeAttenuation: false, depthWrite: false };
+        if ( opacity < 1 ) {
+            // Setting opacity=1 would cause the texture's alpha component to be
+            // discarded, giving the text a black background instead of the
+            // background being transparent.
+            materialOptions.opacity = opacity;
+        }
+        var sprite = new THREE.Sprite( new THREE.SpriteMaterial( materialOptions ) );
+        sprite.position.set( x, y, z );
+
+        // Scaling factor, chosen somewhat arbitrarily so that the size of the text
+        // is consistent with previously generated plots.
+        var scale = 1/625;
+        if ( options.projection === 'orthographic' ) {
+            scale = midToCorner/256; // Needs to scale along with the plot itself.
+        }
+        sprite.scale.set( scale * width, scale * height, 1 );
+
+        scene.add( sprite );
+
+        return sprite;
+
+    }
+
+    if ( options.axes ) scene.add( new THREE.AxesHelper( Math.min( a[0]*b[1].x, a[1]*b[1].y, a[2]*b[1].z ) ) );
+
+    var camera = createCamera();
+    camera.up.set( 0, 0, 1 );
+    camera.position.set( a[0]*xMid, a[1]*yMid, a[2]*zMid );
+
+    var offset = new THREE.Vector3( a[0]*xRange, a[1]*yRange, a[2]*zRange );
+
+    if ( options.viewpoint ) {
+
+        var aa = options.viewpoint;
+        var axis = new THREE.Vector3( aa[0][0], aa[0][1], aa[0][2] ).normalize();
+        var angle = aa[1] * Math.PI / 180;
+        var q = new THREE.Quaternion().setFromAxisAngle( axis, angle ).inverse();
+
+        offset.set( 0, 0, offset.length() );
+        offset.applyQuaternion( q );
+
+    }
+
+    camera.position.add( offset );
+
+    function createCamera() {
+
+        var aspect = window.innerWidth / window.innerHeight;
+
+        // Scale the near and far clipping planes along with the overall plot size.
+        var nearClip = 0.01 * midToCorner;
+        var farClip = 100 * midToCorner;
+
+        if ( options.projection === 'orthographic' ) {
+            var camera = new THREE.OrthographicCamera( -1, 1, 1, -1, -farClip, farClip );
+            updateCameraAspect( camera, aspect );
+            return camera;
+        }
+
+        return new THREE.PerspectiveCamera( 45, aspect, nearClip, farClip );
+
+    }
+
+    function updateCameraAspect( camera, aspect ) {
+
+        if ( camera.isPerspectiveCamera ) {
+            camera.aspect = aspect;
+        } else if ( camera.isOrthographicCamera ) {
+            // Fit the camera frustum to the bounding box's diagonal so that the entire plot fits
+            // within at the default zoom level and camera position.
+            if ( aspect > 1 ) { // Wide window
+                camera.top = midToCorner;
+                camera.right = midToCorner * aspect;
+            } else { // Tall or square window
+                camera.top = midToCorner / aspect;
+                camera.right = midToCorner;
+            }
+            camera.bottom = -camera.top;
+            camera.left = -camera.right;
+        }
+
+        camera.updateProjectionMatrix();
+
+    }
+
+    var lights = [{"x":-5, "y":3, "z":0, "color":"#7f7f7f", "parent":"camera"}];
+    for ( var i=0 ; i < lights.length ; i++ ) {
+        var light = new THREE.DirectionalLight( lights[i].color, 1 );
+        light.position.set( a[0]*lights[i].x, a[1]*lights[i].y, a[2]*lights[i].z );
+        if ( lights[i].parent === 'camera' ) {
+            light.target.position.set( a[0]*xMid, a[1]*yMid, a[2]*zMid );
+            scene.add( light.target );
+            camera.add( light );
+        } else scene.add( light );
+    }
+    scene.add( camera );
+
+    var ambient = {"color":"#7f7f7f"};
+    scene.add( new THREE.AmbientLight( ambient.color, 1 ) );
+
+    var controls = new THREE.OrbitControls( camera, renderer.domElement );
+    controls.target.set( a[0]*xMid, a[1]*yMid, a[2]*zMid );
+    controls.addEventListener( 'change', function() { if ( !animate ) render(); } );
+
+    window.addEventListener( 'resize', function() {
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        updateCameraAspect( camera, window.innerWidth / window.innerHeight );
+        if ( window.rescaleFatLines ) rescaleFatLines();
+        if ( !animate ) render();
+
+    } );
+
+    var texts = [{"color": "#000000", "fontSize": 35.0, "fontFamily": ["monospace"], "fontStyle": "normal", "fontWeight": "normal", "opacity": 1.0, "text": "x", "x": 2.2, "y": 0.0, "z": 0.0}, {"color": "#000000", "fontSize": 35.0, "fontFamily": ["monospace"], "fontStyle": "normal", "fontWeight": "normal", "opacity": 1.0, "text": "y", "x": 0.0, "y": 2.2, "z": 0.0}, {"color": "#000000", "fontSize": 35.0, "fontFamily": ["monospace"], "fontStyle": "normal", "fontWeight": "normal", "opacity": 1.0, "text": "z", "x": 0.0, "y": 0.0, "z": 2.2}];
+    for ( var i=0 ; i < texts.length ; i++ ) addText( texts[i] );
+
+    function addText( json ) {
+        var sprite = addLabel( json.text, a[0]*json.x, a[1]*json.y, a[2]*json.z, json );
+        sprite.userData = json;
+    }
+
+    var points = [];
+    for ( var i=0 ; i < points.length ; i++ ) addPoint( points[i] );
+
+    function addPoint( json ) {
+
+        var geometry = new THREE.Geometry();
+        var v = json.point;
+        geometry.vertices.push( new THREE.Vector3( a[0]*v[0], a[1]*v[1], a[2]*v[2] ) );
+
+        var canvas = document.createElement( 'canvas' );
+        canvas.width = 128;
+        canvas.height = 128;
+
+        var context = canvas.getContext( '2d' );
+        context.arc( 64, 64, 64, 0, 2 * Math.PI );
+        context.fillStyle = json.color;
+        context.fill();
+
+        var texture = new THREE.Texture( canvas );
+        texture.needsUpdate = true;
+
+        var transparent = json.opacity < 1 ? true : false;
+        var size = camera.isOrthographicCamera ? json.size : json.size/100;
+        var material = new THREE.PointsMaterial( { size: size, map: texture,
+                                                   transparent: transparent, opacity: json.opacity,
+                                                   alphaTest: .1 } );
+
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
+        var mesh = new THREE.Points( geometry, material );
+        mesh.position.set( c.x, c.y, c.z );
+        mesh.userData = json;
+        scene.add( mesh );
+
+    }
+
+    var lines = [{"points": [[-2.0, -2.0, 0.0], [-1.945945945945946, -2.0, 0.0], [-1.891891891891892, -2.0, 0.0], [-1.8378378378378382, -2.0, 0.0], [-1.7837837837837842, -2.0, 0.0], [-1.7297297297297303, -2.0, 0.0], [-1.6756756756756763, -2.0, 0.0], [-1.6216216216216224, -2.0, 0.0], [-1.5675675675675684, -2.0, 0.0], [-1.5135135135135145, -2.0, 0.0], [-1.4594594594594605, -2.0, 0.0], [-1.4054054054054066, -2.0, 0.0], [-1.3513513513513526, -2.0, 0.0], [-1.2972972972972987, -2.0, 0.0], [-1.2432432432432448, -2.0, 0.0], [-1.1891891891891908, -2.0, 0.0], [-1.1351351351351369, -2.0, 0.0], [-1.081081081081083, -2.0, 0.0], [-1.027027027027029, -2.0, 0.0], [-0.9729729729729749, -2.0, 0.0], [-0.9189189189189209, -2.0, 0.0], [-0.8648648648648668, -2.0, 0.0], [-0.8108108108108127, -2.0, 0.0], [-0.7567567567567587, -2.0, 0.0], [-0.7027027027027046, -2.0, 0.0], [-0.6486486486486506, -2.0, 0.0], [-0.5945945945945965, -2.0, 0.0], [-0.5405405405405425, -2.0, 0.0], [-0.4864864864864884, -2.0, 0.0], [-0.43243243243243434, -2.0, 0.0], [-0.3783783783783803, -2.0, 0.0], [-0.32432432432432623, -2.0, 0.0], [-0.2702702702702722, -2.0, 0.0], [-0.21621621621621812, -2.0, 0.0], [-0.16216216216216406, -2.0, 0.0], [-0.10810810810811, -2.0, 0.0], [-0.054054054054055944, -2.0, 0.0], [-1.887379141862766e-15, -2.0, 0.0], [0.05405405405405217, -2.0, 0.0], [0.10810810810810623, -2.0, 0.0], [0.16216216216216028, -2.0, 0.0], [0.21621621621621434, -2.0, 0.0], [0.2702702702702684, -2.0, 0.0], [0.32432432432432245, -2.0, 0.0], [0.3783783783783765, -2.0, 0.0], [0.43243243243243057, -2.0, 0.0], [0.4864864864864846, -2.0, 0.0], [0.5405405405405387, -2.0, 0.0], [0.5945945945945927, -2.0, 0.0], [0.6486486486486468, -2.0, 0.0], [0.7027027027027009, -2.0, 0.0], [0.7567567567567549, -2.0, 0.0], [0.810810810810809, -2.0, 0.0], [0.864864864864863, -2.0, 0.0], [0.9189189189189171, -2.0, 0.0], [0.9729729729729711, -2.0, 0.0], [1.0270270270270252, -2.0, 0.0], [1.0810810810810794, -2.0, 0.0], [1.1351351351351333, -2.0, 0.0], [1.1891891891891873, -2.0, 0.0], [1.2432432432432412, -2.0, 0.0], [1.2972972972972951, -2.0, 0.0], [1.351351351351349, -2.0, 0.0], [1.405405405405403, -2.0, 0.0], [1.459459459459457, -2.0, 0.0], [1.513513513513511, -2.0, 0.0], [1.5675675675675649, -2.0, 0.0], [1.6216216216216188, -2.0, 0.0], [1.6756756756756728, -2.0, 0.0], [1.7297297297297267, -2.0, 0.0], [1.7837837837837807, -2.0, 0.0], [1.8378378378378346, -2.0, 0.0], [1.8918918918918886, -2.0, 0.0], [1.9459459459459425, -2.0, 0.0], [2.0, -2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-2.0, -2.0, 0.0], [-2.0, -1.945945945945946, 0.0], [-2.0, -1.891891891891892, 0.0], [-2.0, -1.8378378378378382, 0.0], [-2.0, -1.7837837837837842, 0.0], [-2.0, -1.7297297297297303, 0.0], [-2.0, -1.6756756756756763, 0.0], [-2.0, -1.6216216216216224, 0.0], [-2.0, -1.5675675675675684, 0.0], [-2.0, -1.5135135135135145, 0.0], [-2.0, -1.4594594594594605, 0.0], [-2.0, -1.4054054054054066, 0.0], [-2.0, -1.3513513513513526, 0.0], [-2.0, -1.2972972972972987, 0.0], [-2.0, -1.2432432432432448, 0.0], [-2.0, -1.1891891891891908, 0.0], [-2.0, -1.1351351351351369, 0.0], [-2.0, -1.081081081081083, 0.0], [-2.0, -1.027027027027029, 0.0], [-2.0, -0.9729729729729749, 0.0], [-2.0, -0.9189189189189209, 0.0], [-2.0, -0.8648648648648668, 0.0], [-2.0, -0.8108108108108127, 0.0], [-2.0, -0.7567567567567587, 0.0], [-2.0, -0.7027027027027046, 0.0], [-2.0, -0.6486486486486506, 0.0], [-2.0, -0.5945945945945965, 0.0], [-2.0, -0.5405405405405425, 0.0], [-2.0, -0.4864864864864884, 0.0], [-2.0, -0.43243243243243434, 0.0], [-2.0, -0.3783783783783803, 0.0], [-2.0, -0.32432432432432623, 0.0], [-2.0, -0.2702702702702722, 0.0], [-2.0, -0.21621621621621812, 0.0], [-2.0, -0.16216216216216406, 0.0], [-2.0, -0.10810810810811, 0.0], [-2.0, -0.054054054054055944, 0.0], [-2.0, -1.887379141862766e-15, 0.0], [-2.0, 0.05405405405405217, 0.0], [-2.0, 0.10810810810810623, 0.0], [-2.0, 0.16216216216216028, 0.0], [-2.0, 0.21621621621621434, 0.0], [-2.0, 0.2702702702702684, 0.0], [-2.0, 0.32432432432432245, 0.0], [-2.0, 0.3783783783783765, 0.0], [-2.0, 0.43243243243243057, 0.0], [-2.0, 0.4864864864864846, 0.0], [-2.0, 0.5405405405405387, 0.0], [-2.0, 0.5945945945945927, 0.0], [-2.0, 0.6486486486486468, 0.0], [-2.0, 0.7027027027027009, 0.0], [-2.0, 0.7567567567567549, 0.0], [-2.0, 0.810810810810809, 0.0], [-2.0, 0.864864864864863, 0.0], [-2.0, 0.9189189189189171, 0.0], [-2.0, 0.9729729729729711, 0.0], [-2.0, 1.0270270270270252, 0.0], [-2.0, 1.0810810810810794, 0.0], [-2.0, 1.1351351351351333, 0.0], [-2.0, 1.1891891891891873, 0.0], [-2.0, 1.2432432432432412, 0.0], [-2.0, 1.2972972972972951, 0.0], [-2.0, 1.351351351351349, 0.0], [-2.0, 1.405405405405403, 0.0], [-2.0, 1.459459459459457, 0.0], [-2.0, 1.513513513513511, 0.0], [-2.0, 1.5675675675675649, 0.0], [-2.0, 1.6216216216216188, 0.0], [-2.0, 1.6756756756756728, 0.0], [-2.0, 1.7297297297297267, 0.0], [-2.0, 1.7837837837837807, 0.0], [-2.0, 1.8378378378378346, 0.0], [-2.0, 1.8918918918918886, 0.0], [-2.0, 1.9459459459459425, 0.0], [-2.0, 2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-1.0, -2.0, 0.0], [-1.0, -1.945945945945946, 0.0], [-1.0, -1.891891891891892, 0.0], [-1.0, -1.8378378378378382, 0.0], [-1.0, -1.7837837837837842, 0.0], [-1.0, -1.7297297297297303, 0.0], [-1.0, -1.6756756756756763, 0.0], [-1.0, -1.6216216216216224, 0.0], [-1.0, -1.5675675675675684, 0.0], [-1.0, -1.5135135135135145, 0.0], [-1.0, -1.4594594594594605, 0.0], [-1.0, -1.4054054054054066, 0.0], [-1.0, -1.3513513513513526, 0.0], [-1.0, -1.2972972972972987, 0.0], [-1.0, -1.2432432432432448, 0.0], [-1.0, -1.1891891891891908, 0.0], [-1.0, -1.1351351351351369, 0.0], [-1.0, -1.081081081081083, 0.0], [-1.0, -1.027027027027029, 0.0], [-1.0, -0.9729729729729749, 0.0], [-1.0, -0.9189189189189209, 0.0], [-1.0, -0.8648648648648668, 0.0], [-1.0, -0.8108108108108127, 0.0], [-1.0, -0.7567567567567587, 0.0], [-1.0, -0.7027027027027046, 0.0], [-1.0, -0.6486486486486506, 0.0], [-1.0, -0.5945945945945965, 0.0], [-1.0, -0.5405405405405425, 0.0], [-1.0, -0.4864864864864884, 0.0], [-1.0, -0.43243243243243434, 0.0], [-1.0, -0.3783783783783803, 0.0], [-1.0, -0.32432432432432623, 0.0], [-1.0, -0.2702702702702722, 0.0], [-1.0, -0.21621621621621812, 0.0], [-1.0, -0.16216216216216406, 0.0], [-1.0, -0.10810810810811, 0.0], [-1.0, -0.054054054054055944, 0.0], [-1.0, -1.887379141862766e-15, 0.0], [-1.0, 0.05405405405405217, 0.0], [-1.0, 0.10810810810810623, 0.0], [-1.0, 0.16216216216216028, 0.0], [-1.0, 0.21621621621621434, 0.0], [-1.0, 0.2702702702702684, 0.0], [-1.0, 0.32432432432432245, 0.0], [-1.0, 0.3783783783783765, 0.0], [-1.0, 0.43243243243243057, 0.0], [-1.0, 0.4864864864864846, 0.0], [-1.0, 0.5405405405405387, 0.0], [-1.0, 0.5945945945945927, 0.0], [-1.0, 0.6486486486486468, 0.0], [-1.0, 0.7027027027027009, 0.0], [-1.0, 0.7567567567567549, 0.0], [-1.0, 0.810810810810809, 0.0], [-1.0, 0.864864864864863, 0.0], [-1.0, 0.9189189189189171, 0.0], [-1.0, 0.9729729729729711, 0.0], [-1.0, 1.0270270270270252, 0.0], [-1.0, 1.0810810810810794, 0.0], [-1.0, 1.1351351351351333, 0.0], [-1.0, 1.1891891891891873, 0.0], [-1.0, 1.2432432432432412, 0.0], [-1.0, 1.2972972972972951, 0.0], [-1.0, 1.351351351351349, 0.0], [-1.0, 1.405405405405403, 0.0], [-1.0, 1.459459459459457, 0.0], [-1.0, 1.513513513513511, 0.0], [-1.0, 1.5675675675675649, 0.0], [-1.0, 1.6216216216216188, 0.0], [-1.0, 1.6756756756756728, 0.0], [-1.0, 1.7297297297297267, 0.0], [-1.0, 1.7837837837837807, 0.0], [-1.0, 1.8378378378378346, 0.0], [-1.0, 1.8918918918918886, 0.0], [-1.0, 1.9459459459459425, 0.0], [-1.0, 2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[0.0, -2.0, 0.0], [0.0, -1.945945945945946, 0.0], [0.0, -1.891891891891892, 0.0], [0.0, -1.8378378378378382, 0.0], [0.0, -1.7837837837837842, 0.0], [0.0, -1.7297297297297303, 0.0], [0.0, -1.6756756756756763, 0.0], [0.0, -1.6216216216216224, 0.0], [0.0, -1.5675675675675684, 0.0], [0.0, -1.5135135135135145, 0.0], [0.0, -1.4594594594594605, 0.0], [0.0, -1.4054054054054066, 0.0], [0.0, -1.3513513513513526, 0.0], [0.0, -1.2972972972972987, 0.0], [0.0, -1.2432432432432448, 0.0], [0.0, -1.1891891891891908, 0.0], [0.0, -1.1351351351351369, 0.0], [0.0, -1.081081081081083, 0.0], [0.0, -1.027027027027029, 0.0], [0.0, -0.9729729729729749, 0.0], [0.0, -0.9189189189189209, 0.0], [0.0, -0.8648648648648668, 0.0], [0.0, -0.8108108108108127, 0.0], [0.0, -0.7567567567567587, 0.0], [0.0, -0.7027027027027046, 0.0], [0.0, -0.6486486486486506, 0.0], [0.0, -0.5945945945945965, 0.0], [0.0, -0.5405405405405425, 0.0], [0.0, -0.4864864864864884, 0.0], [0.0, -0.43243243243243434, 0.0], [0.0, -0.3783783783783803, 0.0], [0.0, -0.32432432432432623, 0.0], [0.0, -0.2702702702702722, 0.0], [0.0, -0.21621621621621812, 0.0], [0.0, -0.16216216216216406, 0.0], [0.0, -0.10810810810811, 0.0], [0.0, -0.054054054054055944, 0.0], [0.0, -1.887379141862766e-15, 0.0], [0.0, 0.05405405405405217, 0.0], [0.0, 0.10810810810810623, 0.0], [0.0, 0.16216216216216028, 0.0], [0.0, 0.21621621621621434, 0.0], [0.0, 0.2702702702702684, 0.0], [0.0, 0.32432432432432245, 0.0], [0.0, 0.3783783783783765, 0.0], [0.0, 0.43243243243243057, 0.0], [0.0, 0.4864864864864846, 0.0], [0.0, 0.5405405405405387, 0.0], [0.0, 0.5945945945945927, 0.0], [0.0, 0.6486486486486468, 0.0], [0.0, 0.7027027027027009, 0.0], [0.0, 0.7567567567567549, 0.0], [0.0, 0.810810810810809, 0.0], [0.0, 0.864864864864863, 0.0], [0.0, 0.9189189189189171, 0.0], [0.0, 0.9729729729729711, 0.0], [0.0, 1.0270270270270252, 0.0], [0.0, 1.0810810810810794, 0.0], [0.0, 1.1351351351351333, 0.0], [0.0, 1.1891891891891873, 0.0], [0.0, 1.2432432432432412, 0.0], [0.0, 1.2972972972972951, 0.0], [0.0, 1.351351351351349, 0.0], [0.0, 1.405405405405403, 0.0], [0.0, 1.459459459459457, 0.0], [0.0, 1.513513513513511, 0.0], [0.0, 1.5675675675675649, 0.0], [0.0, 1.6216216216216188, 0.0], [0.0, 1.6756756756756728, 0.0], [0.0, 1.7297297297297267, 0.0], [0.0, 1.7837837837837807, 0.0], [0.0, 1.8378378378378346, 0.0], [0.0, 1.8918918918918886, 0.0], [0.0, 1.9459459459459425, 0.0], [0.0, 2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[1.0, -2.0, 0.0], [1.0, -1.945945945945946, 0.0], [1.0, -1.891891891891892, 0.0], [1.0, -1.8378378378378382, 0.0], [1.0, -1.7837837837837842, 0.0], [1.0, -1.7297297297297303, 0.0], [1.0, -1.6756756756756763, 0.0], [1.0, -1.6216216216216224, 0.0], [1.0, -1.5675675675675684, 0.0], [1.0, -1.5135135135135145, 0.0], [1.0, -1.4594594594594605, 0.0], [1.0, -1.4054054054054066, 0.0], [1.0, -1.3513513513513526, 0.0], [1.0, -1.2972972972972987, 0.0], [1.0, -1.2432432432432448, 0.0], [1.0, -1.1891891891891908, 0.0], [1.0, -1.1351351351351369, 0.0], [1.0, -1.081081081081083, 0.0], [1.0, -1.027027027027029, 0.0], [1.0, -0.9729729729729749, 0.0], [1.0, -0.9189189189189209, 0.0], [1.0, -0.8648648648648668, 0.0], [1.0, -0.8108108108108127, 0.0], [1.0, -0.7567567567567587, 0.0], [1.0, -0.7027027027027046, 0.0], [1.0, -0.6486486486486506, 0.0], [1.0, -0.5945945945945965, 0.0], [1.0, -0.5405405405405425, 0.0], [1.0, -0.4864864864864884, 0.0], [1.0, -0.43243243243243434, 0.0], [1.0, -0.3783783783783803, 0.0], [1.0, -0.32432432432432623, 0.0], [1.0, -0.2702702702702722, 0.0], [1.0, -0.21621621621621812, 0.0], [1.0, -0.16216216216216406, 0.0], [1.0, -0.10810810810811, 0.0], [1.0, -0.054054054054055944, 0.0], [1.0, -1.887379141862766e-15, 0.0], [1.0, 0.05405405405405217, 0.0], [1.0, 0.10810810810810623, 0.0], [1.0, 0.16216216216216028, 0.0], [1.0, 0.21621621621621434, 0.0], [1.0, 0.2702702702702684, 0.0], [1.0, 0.32432432432432245, 0.0], [1.0, 0.3783783783783765, 0.0], [1.0, 0.43243243243243057, 0.0], [1.0, 0.4864864864864846, 0.0], [1.0, 0.5405405405405387, 0.0], [1.0, 0.5945945945945927, 0.0], [1.0, 0.6486486486486468, 0.0], [1.0, 0.7027027027027009, 0.0], [1.0, 0.7567567567567549, 0.0], [1.0, 0.810810810810809, 0.0], [1.0, 0.864864864864863, 0.0], [1.0, 0.9189189189189171, 0.0], [1.0, 0.9729729729729711, 0.0], [1.0, 1.0270270270270252, 0.0], [1.0, 1.0810810810810794, 0.0], [1.0, 1.1351351351351333, 0.0], [1.0, 1.1891891891891873, 0.0], [1.0, 1.2432432432432412, 0.0], [1.0, 1.2972972972972951, 0.0], [1.0, 1.351351351351349, 0.0], [1.0, 1.405405405405403, 0.0], [1.0, 1.459459459459457, 0.0], [1.0, 1.513513513513511, 0.0], [1.0, 1.5675675675675649, 0.0], [1.0, 1.6216216216216188, 0.0], [1.0, 1.6756756756756728, 0.0], [1.0, 1.7297297297297267, 0.0], [1.0, 1.7837837837837807, 0.0], [1.0, 1.8378378378378346, 0.0], [1.0, 1.8918918918918886, 0.0], [1.0, 1.9459459459459425, 0.0], [1.0, 2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[2.0, -2.0, 0.0], [2.0, -1.945945945945946, 0.0], [2.0, -1.891891891891892, 0.0], [2.0, -1.8378378378378382, 0.0], [2.0, -1.7837837837837842, 0.0], [2.0, -1.7297297297297303, 0.0], [2.0, -1.6756756756756763, 0.0], [2.0, -1.6216216216216224, 0.0], [2.0, -1.5675675675675684, 0.0], [2.0, -1.5135135135135145, 0.0], [2.0, -1.4594594594594605, 0.0], [2.0, -1.4054054054054066, 0.0], [2.0, -1.3513513513513526, 0.0], [2.0, -1.2972972972972987, 0.0], [2.0, -1.2432432432432448, 0.0], [2.0, -1.1891891891891908, 0.0], [2.0, -1.1351351351351369, 0.0], [2.0, -1.081081081081083, 0.0], [2.0, -1.027027027027029, 0.0], [2.0, -0.9729729729729749, 0.0], [2.0, -0.9189189189189209, 0.0], [2.0, -0.8648648648648668, 0.0], [2.0, -0.8108108108108127, 0.0], [2.0, -0.7567567567567587, 0.0], [2.0, -0.7027027027027046, 0.0], [2.0, -0.6486486486486506, 0.0], [2.0, -0.5945945945945965, 0.0], [2.0, -0.5405405405405425, 0.0], [2.0, -0.4864864864864884, 0.0], [2.0, -0.43243243243243434, 0.0], [2.0, -0.3783783783783803, 0.0], [2.0, -0.32432432432432623, 0.0], [2.0, -0.2702702702702722, 0.0], [2.0, -0.21621621621621812, 0.0], [2.0, -0.16216216216216406, 0.0], [2.0, -0.10810810810811, 0.0], [2.0, -0.054054054054055944, 0.0], [2.0, -1.887379141862766e-15, 0.0], [2.0, 0.05405405405405217, 0.0], [2.0, 0.10810810810810623, 0.0], [2.0, 0.16216216216216028, 0.0], [2.0, 0.21621621621621434, 0.0], [2.0, 0.2702702702702684, 0.0], [2.0, 0.32432432432432245, 0.0], [2.0, 0.3783783783783765, 0.0], [2.0, 0.43243243243243057, 0.0], [2.0, 0.4864864864864846, 0.0], [2.0, 0.5405405405405387, 0.0], [2.0, 0.5945945945945927, 0.0], [2.0, 0.6486486486486468, 0.0], [2.0, 0.7027027027027009, 0.0], [2.0, 0.7567567567567549, 0.0], [2.0, 0.810810810810809, 0.0], [2.0, 0.864864864864863, 0.0], [2.0, 0.9189189189189171, 0.0], [2.0, 0.9729729729729711, 0.0], [2.0, 1.0270270270270252, 0.0], [2.0, 1.0810810810810794, 0.0], [2.0, 1.1351351351351333, 0.0], [2.0, 1.1891891891891873, 0.0], [2.0, 1.2432432432432412, 0.0], [2.0, 1.2972972972972951, 0.0], [2.0, 1.351351351351349, 0.0], [2.0, 1.405405405405403, 0.0], [2.0, 1.459459459459457, 0.0], [2.0, 1.513513513513511, 0.0], [2.0, 1.5675675675675649, 0.0], [2.0, 1.6216216216216188, 0.0], [2.0, 1.6756756756756728, 0.0], [2.0, 1.7297297297297267, 0.0], [2.0, 1.7837837837837807, 0.0], [2.0, 1.8378378378378346, 0.0], [2.0, 1.8918918918918886, 0.0], [2.0, 1.9459459459459425, 0.0], [2.0, 2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-2.0, -1.0, 0.0], [-1.945945945945946, -1.0, 0.0], [-1.891891891891892, -1.0, 0.0], [-1.8378378378378382, -1.0, 0.0], [-1.7837837837837842, -1.0, 0.0], [-1.7297297297297303, -1.0, 0.0], [-1.6756756756756763, -1.0, 0.0], [-1.6216216216216224, -1.0, 0.0], [-1.5675675675675684, -1.0, 0.0], [-1.5135135135135145, -1.0, 0.0], [-1.4594594594594605, -1.0, 0.0], [-1.4054054054054066, -1.0, 0.0], [-1.3513513513513526, -1.0, 0.0], [-1.2972972972972987, -1.0, 0.0], [-1.2432432432432448, -1.0, 0.0], [-1.1891891891891908, -1.0, 0.0], [-1.1351351351351369, -1.0, 0.0], [-1.081081081081083, -1.0, 0.0], [-1.027027027027029, -1.0, 0.0], [-0.9729729729729749, -1.0, 0.0], [-0.9189189189189209, -1.0, 0.0], [-0.8648648648648668, -1.0, 0.0], [-0.8108108108108127, -1.0, 0.0], [-0.7567567567567587, -1.0, 0.0], [-0.7027027027027046, -1.0, 0.0], [-0.6486486486486506, -1.0, 0.0], [-0.5945945945945965, -1.0, 0.0], [-0.5405405405405425, -1.0, 0.0], [-0.4864864864864884, -1.0, 0.0], [-0.43243243243243434, -1.0, 0.0], [-0.3783783783783803, -1.0, 0.0], [-0.32432432432432623, -1.0, 0.0], [-0.2702702702702722, -1.0, 0.0], [-0.21621621621621812, -1.0, 0.0], [-0.16216216216216406, -1.0, 0.0], [-0.10810810810811, -1.0, 0.0], [-0.054054054054055944, -1.0, 0.0], [-1.887379141862766e-15, -1.0, 0.0], [0.05405405405405217, -1.0, 0.0], [0.10810810810810623, -1.0, 0.0], [0.16216216216216028, -1.0, 0.0], [0.21621621621621434, -1.0, 0.0], [0.2702702702702684, -1.0, 0.0], [0.32432432432432245, -1.0, 0.0], [0.3783783783783765, -1.0, 0.0], [0.43243243243243057, -1.0, 0.0], [0.4864864864864846, -1.0, 0.0], [0.5405405405405387, -1.0, 0.0], [0.5945945945945927, -1.0, 0.0], [0.6486486486486468, -1.0, 0.0], [0.7027027027027009, -1.0, 0.0], [0.7567567567567549, -1.0, 0.0], [0.810810810810809, -1.0, 0.0], [0.864864864864863, -1.0, 0.0], [0.9189189189189171, -1.0, 0.0], [0.9729729729729711, -1.0, 0.0], [1.0270270270270252, -1.0, 0.0], [1.0810810810810794, -1.0, 0.0], [1.1351351351351333, -1.0, 0.0], [1.1891891891891873, -1.0, 0.0], [1.2432432432432412, -1.0, 0.0], [1.2972972972972951, -1.0, 0.0], [1.351351351351349, -1.0, 0.0], [1.405405405405403, -1.0, 0.0], [1.459459459459457, -1.0, 0.0], [1.513513513513511, -1.0, 0.0], [1.5675675675675649, -1.0, 0.0], [1.6216216216216188, -1.0, 0.0], [1.6756756756756728, -1.0, 0.0], [1.7297297297297267, -1.0, 0.0], [1.7837837837837807, -1.0, 0.0], [1.8378378378378346, -1.0, 0.0], [1.8918918918918886, -1.0, 0.0], [1.9459459459459425, -1.0, 0.0], [2.0, -1.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-2.0, 0.0, 0.0], [-1.945945945945946, 0.0, 0.0], [-1.891891891891892, 0.0, 0.0], [-1.8378378378378382, 0.0, 0.0], [-1.7837837837837842, 0.0, 0.0], [-1.7297297297297303, 0.0, 0.0], [-1.6756756756756763, 0.0, 0.0], [-1.6216216216216224, 0.0, 0.0], [-1.5675675675675684, 0.0, 0.0], [-1.5135135135135145, 0.0, 0.0], [-1.4594594594594605, 0.0, 0.0], [-1.4054054054054066, 0.0, 0.0], [-1.3513513513513526, 0.0, 0.0], [-1.2972972972972987, 0.0, 0.0], [-1.2432432432432448, 0.0, 0.0], [-1.1891891891891908, 0.0, 0.0], [-1.1351351351351369, 0.0, 0.0], [-1.081081081081083, 0.0, 0.0], [-1.027027027027029, 0.0, 0.0], [-0.9729729729729749, 0.0, 0.0], [-0.9189189189189209, 0.0, 0.0], [-0.8648648648648668, 0.0, 0.0], [-0.8108108108108127, 0.0, 0.0], [-0.7567567567567587, 0.0, 0.0], [-0.7027027027027046, 0.0, 0.0], [-0.6486486486486506, 0.0, 0.0], [-0.5945945945945965, 0.0, 0.0], [-0.5405405405405425, 0.0, 0.0], [-0.4864864864864884, 0.0, 0.0], [-0.43243243243243434, 0.0, 0.0], [-0.3783783783783803, 0.0, 0.0], [-0.32432432432432623, 0.0, 0.0], [-0.2702702702702722, 0.0, 0.0], [-0.21621621621621812, 0.0, 0.0], [-0.16216216216216406, 0.0, 0.0], [-0.10810810810811, 0.0, 0.0], [-0.054054054054055944, 0.0, 0.0], [-1.887379141862766e-15, 0.0, 0.0], [0.05405405405405217, 0.0, 0.0], [0.10810810810810623, 0.0, 0.0], [0.16216216216216028, 0.0, 0.0], [0.21621621621621434, 0.0, 0.0], [0.2702702702702684, 0.0, 0.0], [0.32432432432432245, 0.0, 0.0], [0.3783783783783765, 0.0, 0.0], [0.43243243243243057, 0.0, 0.0], [0.4864864864864846, 0.0, 0.0], [0.5405405405405387, 0.0, 0.0], [0.5945945945945927, 0.0, 0.0], [0.6486486486486468, 0.0, 0.0], [0.7027027027027009, 0.0, 0.0], [0.7567567567567549, 0.0, 0.0], [0.810810810810809, 0.0, 0.0], [0.864864864864863, 0.0, 0.0], [0.9189189189189171, 0.0, 0.0], [0.9729729729729711, 0.0, 0.0], [1.0270270270270252, 0.0, 0.0], [1.0810810810810794, 0.0, 0.0], [1.1351351351351333, 0.0, 0.0], [1.1891891891891873, 0.0, 0.0], [1.2432432432432412, 0.0, 0.0], [1.2972972972972951, 0.0, 0.0], [1.351351351351349, 0.0, 0.0], [1.405405405405403, 0.0, 0.0], [1.459459459459457, 0.0, 0.0], [1.513513513513511, 0.0, 0.0], [1.5675675675675649, 0.0, 0.0], [1.6216216216216188, 0.0, 0.0], [1.6756756756756728, 0.0, 0.0], [1.7297297297297267, 0.0, 0.0], [1.7837837837837807, 0.0, 0.0], [1.8378378378378346, 0.0, 0.0], [1.8918918918918886, 0.0, 0.0], [1.9459459459459425, 0.0, 0.0], [2.0, 0.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-2.0, 1.0, 0.0], [-1.945945945945946, 1.0, 0.0], [-1.891891891891892, 1.0, 0.0], [-1.8378378378378382, 1.0, 0.0], [-1.7837837837837842, 1.0, 0.0], [-1.7297297297297303, 1.0, 0.0], [-1.6756756756756763, 1.0, 0.0], [-1.6216216216216224, 1.0, 0.0], [-1.5675675675675684, 1.0, 0.0], [-1.5135135135135145, 1.0, 0.0], [-1.4594594594594605, 1.0, 0.0], [-1.4054054054054066, 1.0, 0.0], [-1.3513513513513526, 1.0, 0.0], [-1.2972972972972987, 1.0, 0.0], [-1.2432432432432448, 1.0, 0.0], [-1.1891891891891908, 1.0, 0.0], [-1.1351351351351369, 1.0, 0.0], [-1.081081081081083, 1.0, 0.0], [-1.027027027027029, 1.0, 0.0], [-0.9729729729729749, 1.0, 0.0], [-0.9189189189189209, 1.0, 0.0], [-0.8648648648648668, 1.0, 0.0], [-0.8108108108108127, 1.0, 0.0], [-0.7567567567567587, 1.0, 0.0], [-0.7027027027027046, 1.0, 0.0], [-0.6486486486486506, 1.0, 0.0], [-0.5945945945945965, 1.0, 0.0], [-0.5405405405405425, 1.0, 0.0], [-0.4864864864864884, 1.0, 0.0], [-0.43243243243243434, 1.0, 0.0], [-0.3783783783783803, 1.0, 0.0], [-0.32432432432432623, 1.0, 0.0], [-0.2702702702702722, 1.0, 0.0], [-0.21621621621621812, 1.0, 0.0], [-0.16216216216216406, 1.0, 0.0], [-0.10810810810811, 1.0, 0.0], [-0.054054054054055944, 1.0, 0.0], [-1.887379141862766e-15, 1.0, 0.0], [0.05405405405405217, 1.0, 0.0], [0.10810810810810623, 1.0, 0.0], [0.16216216216216028, 1.0, 0.0], [0.21621621621621434, 1.0, 0.0], [0.2702702702702684, 1.0, 0.0], [0.32432432432432245, 1.0, 0.0], [0.3783783783783765, 1.0, 0.0], [0.43243243243243057, 1.0, 0.0], [0.4864864864864846, 1.0, 0.0], [0.5405405405405387, 1.0, 0.0], [0.5945945945945927, 1.0, 0.0], [0.6486486486486468, 1.0, 0.0], [0.7027027027027009, 1.0, 0.0], [0.7567567567567549, 1.0, 0.0], [0.810810810810809, 1.0, 0.0], [0.864864864864863, 1.0, 0.0], [0.9189189189189171, 1.0, 0.0], [0.9729729729729711, 1.0, 0.0], [1.0270270270270252, 1.0, 0.0], [1.0810810810810794, 1.0, 0.0], [1.1351351351351333, 1.0, 0.0], [1.1891891891891873, 1.0, 0.0], [1.2432432432432412, 1.0, 0.0], [1.2972972972972951, 1.0, 0.0], [1.351351351351349, 1.0, 0.0], [1.405405405405403, 1.0, 0.0], [1.459459459459457, 1.0, 0.0], [1.513513513513511, 1.0, 0.0], [1.5675675675675649, 1.0, 0.0], [1.6216216216216188, 1.0, 0.0], [1.6756756756756728, 1.0, 0.0], [1.7297297297297267, 1.0, 0.0], [1.7837837837837807, 1.0, 0.0], [1.8378378378378346, 1.0, 0.0], [1.8918918918918886, 1.0, 0.0], [1.9459459459459425, 1.0, 0.0], [2.0, 1.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-2.0, 2.0, 0.0], [-1.945945945945946, 2.0, 0.0], [-1.891891891891892, 2.0, 0.0], [-1.8378378378378382, 2.0, 0.0], [-1.7837837837837842, 2.0, 0.0], [-1.7297297297297303, 2.0, 0.0], [-1.6756756756756763, 2.0, 0.0], [-1.6216216216216224, 2.0, 0.0], [-1.5675675675675684, 2.0, 0.0], [-1.5135135135135145, 2.0, 0.0], [-1.4594594594594605, 2.0, 0.0], [-1.4054054054054066, 2.0, 0.0], [-1.3513513513513526, 2.0, 0.0], [-1.2972972972972987, 2.0, 0.0], [-1.2432432432432448, 2.0, 0.0], [-1.1891891891891908, 2.0, 0.0], [-1.1351351351351369, 2.0, 0.0], [-1.081081081081083, 2.0, 0.0], [-1.027027027027029, 2.0, 0.0], [-0.9729729729729749, 2.0, 0.0], [-0.9189189189189209, 2.0, 0.0], [-0.8648648648648668, 2.0, 0.0], [-0.8108108108108127, 2.0, 0.0], [-0.7567567567567587, 2.0, 0.0], [-0.7027027027027046, 2.0, 0.0], [-0.6486486486486506, 2.0, 0.0], [-0.5945945945945965, 2.0, 0.0], [-0.5405405405405425, 2.0, 0.0], [-0.4864864864864884, 2.0, 0.0], [-0.43243243243243434, 2.0, 0.0], [-0.3783783783783803, 2.0, 0.0], [-0.32432432432432623, 2.0, 0.0], [-0.2702702702702722, 2.0, 0.0], [-0.21621621621621812, 2.0, 0.0], [-0.16216216216216406, 2.0, 0.0], [-0.10810810810811, 2.0, 0.0], [-0.054054054054055944, 2.0, 0.0], [-1.887379141862766e-15, 2.0, 0.0], [0.05405405405405217, 2.0, 0.0], [0.10810810810810623, 2.0, 0.0], [0.16216216216216028, 2.0, 0.0], [0.21621621621621434, 2.0, 0.0], [0.2702702702702684, 2.0, 0.0], [0.32432432432432245, 2.0, 0.0], [0.3783783783783765, 2.0, 0.0], [0.43243243243243057, 2.0, 0.0], [0.4864864864864846, 2.0, 0.0], [0.5405405405405387, 2.0, 0.0], [0.5945945945945927, 2.0, 0.0], [0.6486486486486468, 2.0, 0.0], [0.7027027027027009, 2.0, 0.0], [0.7567567567567549, 2.0, 0.0], [0.810810810810809, 2.0, 0.0], [0.864864864864863, 2.0, 0.0], [0.9189189189189171, 2.0, 0.0], [0.9729729729729711, 2.0, 0.0], [1.0270270270270252, 2.0, 0.0], [1.0810810810810794, 2.0, 0.0], [1.1351351351351333, 2.0, 0.0], [1.1891891891891873, 2.0, 0.0], [1.2432432432432412, 2.0, 0.0], [1.2972972972972951, 2.0, 0.0], [1.351351351351349, 2.0, 0.0], [1.405405405405403, 2.0, 0.0], [1.459459459459457, 2.0, 0.0], [1.513513513513511, 2.0, 0.0], [1.5675675675675649, 2.0, 0.0], [1.6216216216216188, 2.0, 0.0], [1.6756756756756728, 2.0, 0.0], [1.7297297297297267, 2.0, 0.0], [1.7837837837837807, 2.0, 0.0], [1.8378378378378346, 2.0, 0.0], [1.8918918918918886, 2.0, 0.0], [1.9459459459459425, 2.0, 0.0], [2.0, 2.0, 0.0]], "color": "#000000", "opacity": 0.7, "linewidth": 1.0}, {"points": [[-2.0, 0.0, 0.0], [-1.945945945945946, 0.0, 0.0], [-1.891891891891892, 0.0, 0.0], [-1.8378378378378382, 0.0, 0.0], [-1.7837837837837842, 0.0, 0.0], [-1.7297297297297303, 0.0, 0.0], [-1.6756756756756763, 0.0, 0.0], [-1.6216216216216224, 0.0, 0.0], [-1.5675675675675684, 0.0, 0.0], [-1.5135135135135145, 0.0, 0.0], [-1.4594594594594605, 0.0, 0.0], [-1.4054054054054066, 0.0, 0.0], [-1.3513513513513526, 0.0, 0.0], [-1.2972972972972987, 0.0, 0.0], [-1.2432432432432448, 0.0, 0.0], [-1.1891891891891908, 0.0, 0.0], [-1.1351351351351369, 0.0, 0.0], [-1.081081081081083, 0.0, 0.0], [-1.027027027027029, 0.0, 0.0], [-0.9729729729729749, 0.0, 0.0], [-0.9189189189189209, 0.0, 0.0], [-0.8648648648648668, 0.0, 0.0], [-0.8108108108108127, 0.0, 0.0], [-0.7567567567567587, 0.0, 0.0], [-0.7027027027027046, 0.0, 0.0], [-0.6486486486486506, 0.0, 0.0], [-0.5945945945945965, 0.0, 0.0], [-0.5405405405405425, 0.0, 0.0], [-0.4864864864864884, 0.0, 0.0], [-0.43243243243243434, 0.0, 0.0], [-0.3783783783783803, 0.0, 0.0], [-0.32432432432432623, 0.0, 0.0], [-0.2702702702702722, 0.0, 0.0], [-0.21621621621621812, 0.0, 0.0], [-0.16216216216216406, 0.0, 0.0], [-0.10810810810811, 0.0, 0.0], [-0.054054054054055944, 0.0, 0.0], [-1.887379141862766e-15, 0.0, 0.0], [0.05405405405405217, 0.0, 0.0], [0.10810810810810623, 0.0, 0.0], [0.16216216216216028, 0.0, 0.0], [0.21621621621621434, 0.0, 0.0], [0.2702702702702684, 0.0, 0.0], [0.32432432432432245, 0.0, 0.0], [0.3783783783783765, 0.0, 0.0], [0.43243243243243057, 0.0, 0.0], [0.4864864864864846, 0.0, 0.0], [0.5405405405405387, 0.0, 0.0], [0.5945945945945927, 0.0, 0.0], [0.6486486486486468, 0.0, 0.0], [0.7027027027027009, 0.0, 0.0], [0.7567567567567549, 0.0, 0.0], [0.810810810810809, 0.0, 0.0], [0.864864864864863, 0.0, 0.0], [0.9189189189189171, 0.0, 0.0], [0.9729729729729711, 0.0, 0.0], [1.0270270270270252, 0.0, 0.0], [1.0810810810810794, 0.0, 0.0], [1.1351351351351333, 0.0, 0.0], [1.1891891891891873, 0.0, 0.0], [1.2432432432432412, 0.0, 0.0], [1.2972972972972951, 0.0, 0.0], [1.351351351351349, 0.0, 0.0], [1.405405405405403, 0.0, 0.0], [1.459459459459457, 0.0, 0.0], [1.513513513513511, 0.0, 0.0], [1.5675675675675649, 0.0, 0.0], [1.6216216216216188, 0.0, 0.0], [1.6756756756756728, 0.0, 0.0], [1.7297297297297267, 0.0, 0.0], [1.7837837837837807, 0.0, 0.0], [1.8378378378378346, 0.0, 0.0], [1.8918918918918886, 0.0, 0.0], [1.9459459459459425, 0.0, 0.0], [2.0, 0.0, 0.0]], "color": "#ff0000", "opacity": 1.0, "linewidth": 1.0}, {"points": [[0.0, -2.0, 0.0], [0.0, -1.945945945945946, 0.0], [0.0, -1.891891891891892, 0.0], [0.0, -1.8378378378378382, 0.0], [0.0, -1.7837837837837842, 0.0], [0.0, -1.7297297297297303, 0.0], [0.0, -1.6756756756756763, 0.0], [0.0, -1.6216216216216224, 0.0], [0.0, -1.5675675675675684, 0.0], [0.0, -1.5135135135135145, 0.0], [0.0, -1.4594594594594605, 0.0], [0.0, -1.4054054054054066, 0.0], [0.0, -1.3513513513513526, 0.0], [0.0, -1.2972972972972987, 0.0], [0.0, -1.2432432432432448, 0.0], [0.0, -1.1891891891891908, 0.0], [0.0, -1.1351351351351369, 0.0], [0.0, -1.081081081081083, 0.0], [0.0, -1.027027027027029, 0.0], [0.0, -0.9729729729729749, 0.0], [0.0, -0.9189189189189209, 0.0], [0.0, -0.8648648648648668, 0.0], [0.0, -0.8108108108108127, 0.0], [0.0, -0.7567567567567587, 0.0], [0.0, -0.7027027027027046, 0.0], [0.0, -0.6486486486486506, 0.0], [0.0, -0.5945945945945965, 0.0], [0.0, -0.5405405405405425, 0.0], [0.0, -0.4864864864864884, 0.0], [0.0, -0.43243243243243434, 0.0], [0.0, -0.3783783783783803, 0.0], [0.0, -0.32432432432432623, 0.0], [0.0, -0.2702702702702722, 0.0], [0.0, -0.21621621621621812, 0.0], [0.0, -0.16216216216216406, 0.0], [0.0, -0.10810810810811, 0.0], [0.0, -0.054054054054055944, 0.0], [0.0, -1.887379141862766e-15, 0.0], [0.0, 0.05405405405405217, 0.0], [0.0, 0.10810810810810623, 0.0], [0.0, 0.16216216216216028, 0.0], [0.0, 0.21621621621621434, 0.0], [0.0, 0.2702702702702684, 0.0], [0.0, 0.32432432432432245, 0.0], [0.0, 0.3783783783783765, 0.0], [0.0, 0.43243243243243057, 0.0], [0.0, 0.4864864864864846, 0.0], [0.0, 0.5405405405405387, 0.0], [0.0, 0.5945945945945927, 0.0], [0.0, 0.6486486486486468, 0.0], [0.0, 0.7027027027027009, 0.0], [0.0, 0.7567567567567549, 0.0], [0.0, 0.810810810810809, 0.0], [0.0, 0.864864864864863, 0.0], [0.0, 0.9189189189189171, 0.0], [0.0, 0.9729729729729711, 0.0], [0.0, 1.0270270270270252, 0.0], [0.0, 1.0810810810810794, 0.0], [0.0, 1.1351351351351333, 0.0], [0.0, 1.1891891891891873, 0.0], [0.0, 1.2432432432432412, 0.0], [0.0, 1.2972972972972951, 0.0], [0.0, 1.351351351351349, 0.0], [0.0, 1.405405405405403, 0.0], [0.0, 1.459459459459457, 0.0], [0.0, 1.513513513513511, 0.0], [0.0, 1.5675675675675649, 0.0], [0.0, 1.6216216216216188, 0.0], [0.0, 1.6756756756756728, 0.0], [0.0, 1.7297297297297267, 0.0], [0.0, 1.7837837837837807, 0.0], [0.0, 1.8378378378378346, 0.0], [0.0, 1.8918918918918886, 0.0], [0.0, 1.9459459459459425, 0.0], [0.0, 2.0, 0.0]], "color": "#ffff00", "opacity": 1.0, "linewidth": 1.0}, {"points": [[0.0, 0.0, -2.0], [0.0, 0.0, -1.945945945945946], [0.0, 0.0, -1.891891891891892], [0.0, 0.0, -1.8378378378378382], [0.0, 0.0, -1.7837837837837842], [0.0, 0.0, -1.7297297297297303], [0.0, 0.0, -1.6756756756756763], [0.0, 0.0, -1.6216216216216224], [0.0, 0.0, -1.5675675675675684], [0.0, 0.0, -1.5135135135135145], [0.0, 0.0, -1.4594594594594605], [0.0, 0.0, -1.4054054054054066], [0.0, 0.0, -1.3513513513513526], [0.0, 0.0, -1.2972972972972987], [0.0, 0.0, -1.2432432432432448], [0.0, 0.0, -1.1891891891891908], [0.0, 0.0, -1.1351351351351369], [0.0, 0.0, -1.081081081081083], [0.0, 0.0, -1.027027027027029], [0.0, 0.0, -0.9729729729729749], [0.0, 0.0, -0.9189189189189209], [0.0, 0.0, -0.8648648648648668], [0.0, 0.0, -0.8108108108108127], [0.0, 0.0, -0.7567567567567587], [0.0, 0.0, -0.7027027027027046], [0.0, 0.0, -0.6486486486486506], [0.0, 0.0, -0.5945945945945965], [0.0, 0.0, -0.5405405405405425], [0.0, 0.0, -0.4864864864864884], [0.0, 0.0, -0.43243243243243434], [0.0, 0.0, -0.3783783783783803], [0.0, 0.0, -0.32432432432432623], [0.0, 0.0, -0.2702702702702722], [0.0, 0.0, -0.21621621621621812], [0.0, 0.0, -0.16216216216216406], [0.0, 0.0, -0.10810810810811], [0.0, 0.0, -0.054054054054055944], [0.0, 0.0, -1.887379141862766e-15], [0.0, 0.0, 0.05405405405405217], [0.0, 0.0, 0.10810810810810623], [0.0, 0.0, 0.16216216216216028], [0.0, 0.0, 0.21621621621621434], [0.0, 0.0, 0.2702702702702684], [0.0, 0.0, 0.32432432432432245], [0.0, 0.0, 0.3783783783783765], [0.0, 0.0, 0.43243243243243057], [0.0, 0.0, 0.4864864864864846], [0.0, 0.0, 0.5405405405405387], [0.0, 0.0, 0.5945945945945927], [0.0, 0.0, 0.6486486486486468], [0.0, 0.0, 0.7027027027027009], [0.0, 0.0, 0.7567567567567549], [0.0, 0.0, 0.810810810810809], [0.0, 0.0, 0.864864864864863], [0.0, 0.0, 0.9189189189189171], [0.0, 0.0, 0.9729729729729711], [0.0, 0.0, 1.0270270270270252], [0.0, 0.0, 1.0810810810810794], [0.0, 0.0, 1.1351351351351333], [0.0, 0.0, 1.1891891891891873], [0.0, 0.0, 1.2432432432432412], [0.0, 0.0, 1.2972972972972951], [0.0, 0.0, 1.351351351351349], [0.0, 0.0, 1.405405405405403], [0.0, 0.0, 1.459459459459457], [0.0, 0.0, 1.513513513513511], [0.0, 0.0, 1.5675675675675649], [0.0, 0.0, 1.6216216216216188], [0.0, 0.0, 1.6756756756756728], [0.0, 0.0, 1.7297297297297267], [0.0, 0.0, 1.7837837837837807], [0.0, 0.0, 1.8378378378378346], [0.0, 0.0, 1.8918918918918886], [0.0, 0.0, 1.9459459459459425], [0.0, 0.0, 2.0]], "color": "#6666ff", "opacity": 1.0, "linewidth": 1.0}];
+    for ( var i=0 ; i < lines.length ; i++ ) addLine( lines[i] );
+
+    function addLine( json ) {
+
+        var geometry = new THREE.Geometry();
+        for ( var i=0 ; i < json.points.length ; i++ ) {
+            var v = json.points[i];
+            geometry.vertices.push( new THREE.Vector3( a[0]*v[0], a[1]*v[1], a[2]*v[2] ) );
+        }
+
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
+        var transparent = json.opacity < 1 ? true : false;
+        var materialOptions = { color: json.color, linewidth: json.linewidth,
+                                transparent: transparent, opacity: json.opacity };
+
+        var mesh;
+        if ( json.linewidth > 1 && window.createFatLineStrip ) {
+            mesh = createFatLineStrip( geometry, materialOptions );
+        } else {
+            var material = new THREE.LineBasicMaterial( materialOptions );
+            mesh = new THREE.Line( geometry, material );
+        }
+
+        mesh.position.set( c.x, c.y, c.z );
+        mesh.userData = json;
+        scene.add( mesh );
+
+    }
+
+    var surfaces = [{"vertices": [{"x": 0.9480384757729335, "y": 0.9480384757729335, "z": 0.9480384757729337}, {"x": 0.954886192285455, "y": 0.948465797066253, "z": 0.9407634379670926}, {"x": 0.9459252271188817, "y": 0.9559252271188816, "z": 0.9422649730810374}, {"x": 0.9543838459770476, "y": 0.9404158235103734, "z": 0.9493157578313797}, {"x": 0.9451124137177553, "y": 0.9429000962969306, "z": 0.9561029173041148}, {"x": 0.939884699765528, "y": 0.952485434872229, "z": 0.9517452926810438}, {"x": 0.006847716512521529, "y": 0.00042732129331946814, "z": -0.007275037805840996}, {"x": -0.0021132486540518707, "y": 0.007886751345948129, "z": -0.005773502691896257}, {"x": 0.006345370204114071, "y": -0.007622652262560134, "z": 0.001277282058446063}, {"x": -0.002926062055178175, "y": -0.00513837947600292, "z": 0.008064441531181092}, {"x": -0.008153776007405553, "y": 0.004446959099295455, "z": 0.0037068169081100975}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#6666ff", "opacity": 1.0, "keyframe": 0}, {"vertices": [{"x": 0.9999999999999999, "y": 0.9999999999999999, "z": 1.0}, {"x": 0.9685816253104982, "y": 0.9493204396528919, "z": 0.9262133623554106}, {"x": 0.941698729810778, "y": 0.971698729810778, "z": 0.9307179676972449}, {"x": 0.9670745863852758, "y": 0.9251705189852532, "z": 0.9518703219482718}, {"x": 0.939260289607399, "y": 0.9326233373449248, "z": 0.9722318003664769}, {"x": 0.9235771477507169, "y": 0.9613793530708199, "z": 0.959158926497264}, {"x": 0.9480384757729335, "y": 0.9480384757729335, "z": 0.9480384757729337}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#6666ff", "opacity": 1.0, "keyframe": 0}, {"vertices": [{"x": 1.3407288700895996, "y": 1.0525341440336496e-16, "z": 0.9480384757729337}, {"x": 1.3462197974465753, "y": 0.0030901699437495796, "z": 0.9402731318346934}, {"x": 1.3407288700895996, "y": 0.010000000000000106, "z": 0.9480384757729337}, {"x": 1.3441224498259672, "y": -0.008090169943749368, "z": 0.9432392292847682}, {"x": 1.337335290353232, "y": -0.00809016994374937, "z": 0.9528377222610991}, {"x": 1.335237942732624, "y": 0.0030901699437495783, "z": 0.9558038197111739}, {"x": 0.005490927356975547, "y": 0.0030901699437494742, "z": -0.007765343938240271}, {"x": -3.317995775050481e-19, "y": 0.01, "z": -6.409875621278548e-19}, {"x": 0.0033935797363675163, "y": -0.008090169943749474, "z": -0.004799246488165452}, {"x": -0.003393579736367514, "y": -0.008090169943749476, "z": 0.004799246488165452}, {"x": -0.005490927356975547, "y": 0.003090169943749473, "z": 0.007765343938240271}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#6666ff", "opacity": 1.0, "keyframe": 1}, {"vertices": [{"x": 1.414213562373095, "y": 1.1102230246251565e-16, "z": 1.0}, {"x": 1.3572016521605264, "y": 0.009270509831248528, "z": 0.9247424439582128}, {"x": 1.3407288700895996, "y": 0.030000000000000103, "z": 0.9480384757729337}, {"x": 1.350909609298702, "y": -0.024270509831248316, "z": 0.9336407363084372}, {"x": 1.3305481308804972, "y": -0.024270509831248323, "z": 0.9624362152374301}, {"x": 1.324256088018673, "y": 0.009270509831248525, "z": 0.9713345075876545}, {"x": 1.3407288700895996, "y": 1.0525341440336496e-16, "z": 0.9480384757729337}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#6666ff", "opacity": 1.0, "keyframe": 1}, {"vertices": [{"x": 1.6420491814987097, "y": 1.0525341440336496e-16, "z": -0.00231088230315512}, {"x": 1.6420357971401827, "y": 0.0030901699437495796, "z": -0.011821438048099483}, {"x": 1.6420491814987097, "y": 0.010000000000000106, "z": -0.0023108823031551206}, {"x": 1.6420409095102224, "y": -0.008090169943749368, "z": -0.00818872900543131}, {"x": 1.642057453487197, "y": -0.00809016994374937, "z": 0.003566964399121071}, {"x": 1.6420625658572368, "y": 0.0030901699437495783, "z": 0.007199673441789242}, {"x": -1.3384358527010285e-05, "y": 0.0030901699437494742, "z": -0.009510555744944362}, {"x": -6.418902690146628e-19, "y": 0.01, "z": -6.409875621278548e-19}, {"x": -8.271988487306191e-06, "y": -0.008090169943749474, "z": -0.005877846702276191}, {"x": 8.27198848730723e-06, "y": -0.008090169943749476, "z": 0.005877846702276191}, {"x": 1.3384358527009888e-05, "y": 0.003090169943749473, "z": 0.009510555744944362}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#6666ff", "opacity": 1.0, "keyframe": 2}, {"vertices": [{"x": 1.7320490923746008, "y": 1.1102230246251565e-16, "z": -0.002437540629636432}, {"x": 1.6420090284231286, "y": 0.009270509831248528, "z": -0.030842549537988203}, {"x": 1.6420491814987097, "y": 0.030000000000000103, "z": -0.002310882303155122}, {"x": 1.6420243655332478, "y": -0.024270509831248316, "z": -0.019944422409983696}, {"x": 1.6420739974641716, "y": -0.024270509831248323, "z": 0.01532265780367345}, {"x": 1.6420893345742908, "y": 0.009270509831248525, "z": 0.026220784931677968}, {"x": 1.6420491814987097, "y": 1.0525341440336496e-16, "z": -0.00231088230315512}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#6666ff", "opacity": 1.0, "keyframe": 2}, {"vertices": [{"x": 0.48735049956564913, "y": 9.371577538923522e-17, "z": -0.0020575686603712187}, {"x": 0.4873103468081626, "y": 0.0030901699437495666, "z": -0.011568049062265415}, {"x": 0.48735049956564913, "y": 0.010000000000000094, "z": -0.0020575686603712205}, {"x": 0.48732568379678043, "y": -0.008090169943749382, "z": -0.007935368798081592}, {"x": 0.48737531533451783, "y": -0.00809016994374938, "z": 0.0038202314773391555}, {"x": 0.48739065232313566, "y": 0.003090169943749568, "z": 0.007452911741522978}, {"x": -4.015275748655812e-05, "y": 0.003090169943749473, "z": -0.009510480401894197}, {"x": -1.931083175548405e-18, "y": 0.01, "z": -1.9229474525867147e-18}, {"x": -2.4815768868722794e-05, "y": -0.008090169943749476, "z": -0.0058778001377103725}, {"x": 2.481576886872591e-05, "y": -0.008090169943749474, "z": 0.005877800137710374}, {"x": 4.015275748655693e-05, "y": 0.0030901699437494742, "z": 0.009510480401894197}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#6666ff", "opacity": 1.0, "keyframe": 3}, {"vertices": [{"x": 0.5773496974582002, "y": 1.1102230246251565e-16, "z": -0.0024375406296362583}, {"x": 0.4872300412931895, "y": 0.009270509831248512, "z": -0.03058900986605381}, {"x": 0.48735049956564913, "y": 0.030000000000000093, "z": -0.0020575686603712244}, {"x": 0.48727605225904297, "y": -0.02427050983124833, "z": -0.019690969073502335}, {"x": 0.4874249468722553, "y": -0.02427050983124833, "z": 0.015575831752759898}, {"x": 0.4874709578381088, "y": 0.009270509831248516, "z": 0.026473872545311368}, {"x": 0.48735049956564913, "y": 9.371577538923522e-17, "z": -0.0020575686603712187}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#6666ff", "opacity": 1.0, "keyframe": 3}, {"vertices": [{"x": 0.3987139446093697, "y": 9.371577538923523e-17, "z": 0.28025333787435347}, {"x": 0.4041829938455867, "y": 0.0030901699437495675, "z": 0.27247256990643526}, {"x": 0.3987139446093697, "y": 0.010000000000000094, "z": 0.28025333787435347}, {"x": 0.40209400292349845, "y": -0.00809016994374938, "z": 0.27544455881160357}, {"x": 0.39533388629524097, "y": -0.008090169943749382, "z": 0.28506211693710337}, {"x": 0.3932448953731527, "y": 0.003090169943749567, "z": 0.2880341058422717}, {"x": 0.005469049236216967, "y": 0.003090169943749474, "z": -0.007780767967918206}, {"x": -9.988246388977234e-19, "y": 0.01, "z": -1.9229474525867143e-18}, {"x": 0.003380058314128739, "y": -0.008090169943749474, "z": -0.004808779062749901}, {"x": -0.0033800583141287365, "y": -0.008090169943749476, "z": 0.004808779062749903}, {"x": -0.005469049236216967, "y": 0.0030901699437494734, "z": 0.007780767967918204}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#6666ff", "opacity": 1.0, "keyframe": 4}, {"vertices": [{"x": 0.47234459695383196, "y": 1.1102230246251565e-16, "z": 0.3320078259437851}, {"x": 0.41512109231802063, "y": 0.009270509831248514, "z": 0.25691103397059883}, {"x": 0.3987139446093697, "y": 0.030000000000000093, "z": 0.28025333787435347}, {"x": 0.40885411955175593, "y": -0.02427050983124833, "z": 0.26582700068610376}, {"x": 0.3885737696669835, "y": -0.02427050983124833, "z": 0.2946796750626032}, {"x": 0.3823067969007188, "y": 0.009270509831248514, "z": 0.3035956417781081}, {"x": 0.3987139446093697, "y": 9.371577538923523e-17, "z": 0.28025333787435347}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#6666ff", "opacity": 1.0, "keyframe": 4}, {"vertices": [{"x": 0.2819333339869228, "y": 0.2819333339869228, "z": 0.28025333787435347}, {"x": 0.2887665571228895, "y": 0.28234616190368744, "z": 0.2729638499166689}, {"x": 0.2798085833241134, "y": 0.2898085833241134, "z": 0.27446836747702474}, {"x": 0.28828124880047173, "y": 0.2743132263337975, "z": 0.28153315695325004}, {"x": 0.2790233379634182, "y": 0.2768110205425935, "z": 0.28833379752224675}, {"x": 0.273786942723721, "y": 0.286387677830422, "z": 0.2839675175025769}, {"x": 0.006833223135966727, "y": 0.0004128279167646652, "z": -0.007289487957684601}, {"x": -0.002124750662809356, "y": 0.007875249337190644, "z": -0.005784970397328713}, {"x": 0.006347914813548938, "y": -0.007620107653125268, "z": 0.0012798190788965735}, {"x": -0.0029099960235045314, "y": -0.005122313444329276, "z": 0.008080459647893267}, {"x": -0.008146391263201776, "y": 0.0044543438434992335, "z": 0.003714179628223473}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#6666ff", "opacity": 1.0, "keyframe": 5}, {"vertices": [{"x": 0.3339980675628812, "y": 0.3339980675628812, "z": 0.3320078259437851}, {"x": 0.30243300339482293, "y": 0.2831718177372168, "z": 0.25838487400129967}, {"x": 0.2755590819984947, "y": 0.3055590819984947, "z": 0.26289842668236735}, {"x": 0.3009770784275696, "y": 0.259073011027547, "z": 0.2840927951110432}, {"x": 0.27320334591640916, "y": 0.2665663936539349, "z": 0.30449471681803325}, {"x": 0.25749416019731747, "y": 0.29529636551742044, "z": 0.2913958767590239}, {"x": 0.2819333339869228, "y": 0.2819333339869228, "z": 0.28025333787435347}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#6666ff", "opacity": 1.0, "keyframe": 5}, {"vertices": [{"x": 1.91, "y": 0.0, "z": 1.1695376931857223e-16}, {"x": 1.91, "y": 0.0030901699437494747, "z": -0.00951056516295142}, {"x": 1.91, "y": 0.01, "z": 1.1695376931857223e-16}, {"x": 1.91, "y": -0.008090169943749474, "z": -0.005877852522924615}, {"x": 1.91, "y": -0.008090169943749476, "z": 0.005877852522924848}, {"x": 1.91, "y": 0.0030901699437494725, "z": 0.009510565162951653}, {"x": 5.823541592445462e-19, "y": 0.0030901699437494747, "z": -0.009510565162951536}, {"x": 0.0, "y": 0.01, "z": 0.0}, {"x": 3.599146639029984e-19, "y": -0.008090169943749474, "z": -0.005877852522924732}, {"x": -3.599146639029983e-19, "y": -0.008090169943749476, "z": 0.005877852522924731}, {"x": -5.823541592445462e-19, "y": 0.0030901699437494725, "z": 0.009510565162951536}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#ff0000", "opacity": 1.0}, {"vertices": [{"x": 2.0, "y": 0.0, "z": 1.2246467991473532e-16}, {"x": 1.91, "y": 0.009270509831248424, "z": -0.028531695488854487}, {"x": 1.91, "y": 0.03, "z": 1.1695376931857223e-16}, {"x": 1.91, "y": -0.02427050983124842, "z": -0.017633557568774078}, {"x": 1.91, "y": -0.024270509831248427, "z": 0.017633557568774307}, {"x": 1.91, "y": 0.009270509831248417, "z": 0.028531695488854727}, {"x": 1.91, "y": 0.0, "z": 1.1695376931857223e-16}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#ff0000", "opacity": 1.0}, {"vertices": [{"x": 0.0, "y": 1.91, "z": 1.1695376931857223e-16}, {"x": 0.009510565162951536, "y": 1.91, "z": -0.0030901699437493576}, {"x": 0.0, "y": 1.91, "z": -0.009999999999999884}, {"x": 0.005877852522924732, "y": 1.91, "z": 0.00809016994374959}, {"x": -0.005877852522924731, "y": 1.91, "z": 0.008090169943749592}, {"x": -0.009510565162951536, "y": 1.91, "z": -0.0030901699437493554}, {"x": 0.009510565162951536, "y": 1.8921833652170753e-19, "z": -0.0030901699437494747}, {"x": 0.0, "y": 6.123233995736766e-19, "z": -0.01}, {"x": 0.005877852522924732, "y": -4.953800363085458e-19, "z": 0.008090169943749474}, {"x": -0.005877852522924731, "y": -4.953800363085459e-19, "z": 0.008090169943749476}, {"x": -0.009510565162951536, "y": 1.892183365217074e-19, "z": -0.0030901699437494725}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#ffff00", "opacity": 1.0}, {"vertices": [{"x": 0.0, "y": 2.0, "z": 1.2246467991473532e-16}, {"x": 0.028531695488854605, "y": 1.91, "z": -0.009270509831248308}, {"x": 0.0, "y": 1.91, "z": -0.02999999999999988}, {"x": 0.017633557568774196, "y": 1.91, "z": 0.024270509831248538}, {"x": -0.01763355756877419, "y": 1.91, "z": 0.024270509831248545}, {"x": -0.02853169548885461, "y": 1.91, "z": -0.0092705098312483}, {"x": 0.0, "y": 1.91, "z": 1.1695376931857223e-16}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#ffff00", "opacity": 1.0}, {"vertices": [{"x": 0.0, "y": 0.0, "z": 1.91}, {"x": 0.009510565162951536, "y": 0.0030901699437494747, "z": 1.91}, {"x": 0.0, "y": 0.01, "z": 1.91}, {"x": 0.005877852522924732, "y": -0.008090169943749474, "z": 1.91}, {"x": -0.005877852522924731, "y": -0.008090169943749476, "z": 1.91}, {"x": -0.009510565162951536, "y": 0.0030901699437494725, "z": 1.91}, {"x": 0.009510565162951536, "y": 0.0030901699437494747, "z": 0.0}, {"x": 0.0, "y": 0.01, "z": 0.0}, {"x": 0.005877852522924732, "y": -0.008090169943749474, "z": 0.0}, {"x": -0.005877852522924731, "y": -0.008090169943749476, "z": 0.0}, {"x": -0.009510565162951536, "y": 0.0030901699437494725, "z": 0.0}, {"x": 0.0, "y": 0.0, "z": 0.0}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6, 7], [1, 3, 8, 6], [3, 4, 9, 8], [4, 5, 10, 9], [5, 2, 7, 10], [7, 6, 11], [6, 8, 11], [8, 9, 11], [9, 10, 11], [10, 7, 11]], "color": "#0000ff", "opacity": 1.0}, {"vertices": [{"x": 0.0, "y": 0.0, "z": 2.0}, {"x": 0.028531695488854605, "y": 0.009270509831248424, "z": 1.91}, {"x": 0.0, "y": 0.03, "z": 1.91}, {"x": 0.017633557568774196, "y": -0.02427050983124842, "z": 1.91}, {"x": -0.01763355756877419, "y": -0.024270509831248427, "z": 1.91}, {"x": -0.02853169548885461, "y": 0.009270509831248417, "z": 1.91}, {"x": 0.0, "y": 0.0, "z": 1.91}], "faces": [[0, 1, 2], [0, 3, 1], [0, 4, 3], [0, 5, 4], [0, 2, 5], [2, 1, 6], [1, 3, 6], [3, 4, 6], [4, 5, 6], [5, 2, 6]], "color": "#0000ff", "opacity": 1.0}];
+    for ( var i=0 ; i < surfaces.length ; i++ ) addSurface( surfaces[i] );
+
+    function addSurface( json ) {
+
+        var useFaceColors = 'faceColors' in json ? true : false;
+
+        var geometry = new THREE.Geometry();
+        for ( var i=0 ; i < json.vertices.length ; i++ ) {
+            var v = json.vertices[i];
+            geometry.vertices.push( new THREE.Vector3( a[0]*v.x, a[1]*v.y, a[2]*v.z ) );
+        }
+        for ( var i=0 ; i < json.faces.length ; i++ ) {
+            var f = json.faces[i];
+            for ( var j=0 ; j < f.length - 2 ; j++ ) {
+                var face = new THREE.Face3( f[0], f[j+1], f[j+2] );
+                if ( useFaceColors ) face.color.set( json.faceColors[i] );
+                geometry.faces.push( face );
+            }
+        }
+        geometry.computeVertexNormals();
+
+        var side = json.singleSide ? THREE.FrontSide : THREE.DoubleSide;
+        var transparent = json.opacity < 1 ? true : false;
+        var depthWrite = 'depthWrite' in json ? json.depthWrite : !transparent;
+        var flatShading = json.useFlatShading ? json.useFlatShading : false;
+
+        var material = new THREE.MeshPhongMaterial( { side: side,
+                                     color: useFaceColors ? 'white' : json.color,
+                                     vertexColors: useFaceColors ? THREE.FaceColors : THREE.NoColors,
+                                     transparent: transparent, opacity: json.opacity,
+                                     shininess: 20, flatShading: flatShading,
+                                     depthWrite: depthWrite } );
+
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
+        var mesh = new THREE.Mesh( geometry, material );
+        mesh.position.set( c.x, c.y, c.z );
+        if ( transparent && json.renderOrder ) mesh.renderOrder = json.renderOrder;
+        mesh.userData = json;
+        scene.add( mesh );
+
+        if ( json.showMeshGrid ) addSurfaceMeshGrid( json );
+
+    }
+
+    function addSurfaceMeshGrid( json ) {
+
+        var geometry = new THREE.Geometry();
+
+        for ( var i=0 ; i < json.faces.length ; i++ ) {
+            var f = json.faces[i];
+            for ( var j=0 ; j < f.length ; j++ ) {
+                var k = j === f.length-1 ? 0 : j+1;
+                var v1 = json.vertices[f[j]];
+                var v2 = json.vertices[f[k]];
+                // vertices in opposite directions on neighboring faces
+                var nudge = f[j] < f[k] ? .0005*zRange : -.0005*zRange;
+                geometry.vertices.push( new THREE.Vector3( a[0]*v1.x, a[1]*v1.y, a[2]*(v1.z+nudge) ) );
+                geometry.vertices.push( new THREE.Vector3( a[0]*v2.x, a[1]*v2.y, a[2]*(v2.z+nudge) ) );
+            }
+        }
+
+        var c = new THREE.Vector3();
+        geometry.computeBoundingBox();
+        geometry.boundingBox.getCenter( c );
+        geometry.translate( -c.x, -c.y, -c.z );
+
+        var gridColor = options.theme === 'dark' ? 'white' : 'black';
+        var linewidth = json.linewidth || 1;
+        var materialOptions = { color: gridColor, linewidth: linewidth };
+
+        var mesh;
+        if ( linewidth > 1 && window.createFatLineSegments ) {
+            mesh = createFatLineSegments( geometry, materialOptions );
+        } else {
+            var material = new THREE.LineBasicMaterial( materialOptions );
+            mesh = new THREE.LineSegments( geometry, material );
+        }
+
+        mesh.position.set( c.x, c.y, c.z );
+        mesh.userData = json;
+        scene.add( mesh );
+
+    }
+
+    function render() {
+
+        if ( window.updateAnimation ) animate = updateAnimation();
+        if ( animate ) requestAnimationFrame( render );
+
+        renderer.render( scene, camera );
+
+    }
+
+    render();
+    controls.update();
+    if ( !animate ) render();
+
+
+    // menu functions
+
+    function toggleMenu() {
+
+        var m = document.getElementById( 'menu-content' );
+        if ( m.style.display === 'block' ) m.style.display = 'none'
+        else m.style.display = 'block';
+
+    }
+
+
+    function saveAsPNG() {
+
+        var a = document.body.appendChild( document.createElement( 'a' ) );
+        a.href = renderer.domElement.toDataURL( 'image/png' );
+        a.download = 'screenshot';
+        a.click();
+
+    }
+
+    function saveAsHTML() {
+
+        toggleMenu(); // otherwise visible in output
+        event.stopPropagation();
+
+        var blob = new Blob( [ '<!DOCTYPE html>\n' + document.documentElement.outerHTML ] );
+        var a = document.body.appendChild( document.createElement( 'a' ) );
+        a.href = window.URL.createObjectURL( blob );
+        a.download = suggestFilename();
+        a.click();
+
+        function suggestFilename() {
+            if ( !document.title ) {
+                return 'graphic.html';
+            } else if ( /\.html?$/i.test( document.title ) ) {
+                return document.title; // already ends in .htm or .html
+            } else {
+                return document.title + '.html';
+            }
+        }
+
+    }
+
+    function getViewpoint() {
+
+        function roundTo( x, n ) { return +x.toFixed(n); }
+
+        var v = camera.quaternion.inverse();
+        var r = Math.sqrt( v.x*v.x + v.y*v.y + v.z*v.z );
+        var axis = [ roundTo( v.x / r, 4 ), roundTo( v.y / r, 4 ), roundTo( v.z / r, 4 ) ];
+        var angle = roundTo( 2 * Math.atan2( r, v.w ) * 180 / Math.PI, 2 );
+
+        var textArea = document.createElement( 'textarea' );
+        textArea.textContent = JSON.stringify( axis ) + ',' + angle;
+        textArea.style.csstext = 'position: absolute; top: -100%';
+        document.body.append( textArea );
+        textArea.select();
+        document.execCommand( 'copy' );
+
+        var m = document.getElementById( 'menu-message' );
+        m.innerHTML = 'Viewpoint copied to clipboard';
+        m.style.display = 'block';
+        setTimeout( function() { m.style.display = 'none'; }, 2000 );
+
+    }
+
+    function getCamera() {
+
+        function roundTo( x, n ) { return +x.toFixed(n); }
+
+        var pos = camera.position;
+        var pos_r = [ roundTo( pos.x, 4 ), roundTo( pos.y, 4 ), roundTo( pos.z, 4 ) ];
+   //     var up = camera.up; // up is always (0,0,1)
+        var textArea = document.createElement('textarea');
+        var cam_position = JSON.stringify(pos_r);
+        textArea.textContent = ',camera_position=' + cam_position;
+        textArea.style.csstext = 'position: absolute; top: -100%';
+        document.body.append( textArea );
+        textArea.select();
+        document.execCommand( 'copy' );
+
+        var m = document.getElementById( 'menu-message' );
+        m.innerHTML = 'Camera position '+ cam_position+' copied to clipboard';
+        m.style.display = 'block';
+        setTimeout( function() { m.style.display = 'none'; }, 2000 );
+
+    }
+                                       
+</script><canvas width="1207" height="440" tabindex="0" style="width: 1098px; height: 400px;"></canvas>
+
+<div id="menu-container" onclick="toggleMenu()">ⓘ
+<div id="menu-message"></div>
+<div id="menu-content" style="display: none;">
+<div onclick="saveAsPNG()">Save as PNG</div>
+<div onclick="saveAsHTML()">Save as HTML</div>
+<div onclick="getCamera()">Get camera</div>
+<div onclick="getViewpoint()">Get viewpoint</div>
+<div>Close Menu</div>
+</div></div>
+
+<!-- animation.html -->
+
+<!--
+SVG icons by Google
+"Icons - Material Design"
+    https://material.io/resources/icons/
+    Retrieved April 24, 2020
+Apache license version 2.0
+    https://www.apache.org/licenses/LICENSE-2.0.html
+-->
+
+<div id="animation-ui" class="paused loop">
+
+    <input class="slider" type="range" min="0" max="120" value="0" step="any">
+    <div class="tick-marks"></div>
+
+    <div class="buttons">
+
+        <button class="play-pause" title="Play/pause">
+            <!-- play_arrow -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="play" viewBox="0 0 24 24" fill="#3131ff" width="24px" height="24px">
+                <path d="M8 5v14l11-7z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+            </svg>
+            <!-- pause -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="pause" viewBox="0 0 24 24" fill="#3131ff" width="24px" height="24px">
+                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+            </svg>
+        </button>
+
+        <button class="previous" title="Go to previous frame">
+            <!-- skip_previous -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3131ff" width="24px" height="24px">
+                <path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+            </svg>
+        </button>
+        <button class="next" title="Go to next frame">
+            <!-- skip_next -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#3131ff" width="24px" height="24px">
+                <path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+            </svg>
+        </button>
+
+        <button class="slower" title="Decrease playback speed">
+            <!-- switch_right -->
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#3131ff" width="24" height="24">
+                <rect fill="none" width="24" height="24" transform="matrix(-1 -1.224647e-16 1.224647e-16 -1 24 24)"></rect>
+                <path d="M15.5,15.38V8.62L18.88,12L15.5,15.38 M14,19l7-7l-7-7V19L14,19z M10,19V5l-7,7L10,19z"></path>
+            </svg>
+        </button>
+        <button class="faster" title="Increase playback speed">
+            <!-- switch_left -->
+            <svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24" fill="#3131ff" width="24" height="24">
+                <rect fill="none" height="24" width="24"></rect>
+                <path d="M8.5,8.62v6.76L5.12,12L8.5,8.62 M10,5l-7,7l7,7V5L10,5z M14,5v14l7-7L14,5z"></path>
+            </svg>
+        </button>
+
+        <button class="toggle-loop" title="Toggle looping">
+            <!-- sync_disabled -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="once" viewBox="0 0 24 24" fill="#3131ff" width="24px" height="24px">
+                <path d="M0 0h24v24H0zm0 0h24v24H0z" fill="none"></path>
+                <path d="M10 6.35V4.26c-.8.21-1.55.54-2.23.96l1.46 1.46c.25-.12.5-.24.77-.33zm-7.14-.94l2.36 2.36C4.45 8.99 4 10.44 4 12c0 2.21.91 4.2 2.36 5.64L4 20h6v-6l-2.24 2.24C6.68 15.15 6 13.66 6 12c0-1 .25-1.94.68-2.77l8.08 8.08c-.25.13-.5.25-.77.34v2.09c.8-.21 1.55-.54 2.23-.96l2.36 2.36 1.27-1.27L4.14 4.14 2.86 5.41zM20 4h-6v6l2.24-2.24C17.32 8.85 18 10.34 18 12c0 1-.25 1.94-.68 2.77l1.46 1.46C19.55 15.01 20 13.56 20 12c0-2.21-.91-4.2-2.36-5.64L20 4z"></path>
+            </svg>
+            <!-- sync -->
+            <svg xmlns="http://www.w3.org/2000/svg" class="loop" viewBox="0 0 24 24" fill="#3131ff" width="24px" height="24px">
+                <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"></path>
+                <path d="M0 0h24v24H0z" fill="none"></path>
+            </svg>
+        </button>
+
+    </div>
+
+</div>
+<script>// animation.js
+
+window.updateAnimation = (function() {
+
+    var frameDuration = options.delay;
+    var frameCount, totalDuration;
+    var mixer, action, clock;
+    var ui, slider;
+
+    init();
+    options.animationControls && initUI();
+    options.autoPlay && play();
+    return update;
+
+    function init() {
+
+        var frames = partitionScene();
+        frameCount = frames.length;
+        totalDuration = frameCount * frameDuration;
+
+        var tracks = createTracks( frames );
+        var clip = new THREE.AnimationClip( 'sage_animation', totalDuration, tracks );
+
+        mixer = new THREE.AnimationMixer( scene );
+        mixer.addEventListener( 'finished', function() { pause(); } );
+
+        action = mixer.clipAction( clip );
+        action.timeScale = 100; // Our times are in hundredths of a second.
+        action.clampWhenFinished = true; // Sets paused=true instead of disabling.
+        action.loop = options.loop ? THREE.LoopRepeat : THREE.LoopOnce;
+
+        // We start/stop the clock to play/pause. The action's `paused` property
+        // is instead used to determine if the animation has finished.
+        action.play();
+
+        clock = new THREE.Clock( false ); // Don't start playing yet.
+
+    }
+
+    // Group objects in by keyframe. The result is a potentially sparse list of
+    // lists of objects. Assumes keyframe index specified in objects' user data.
+    function partitionScene() {
+        var frames = [];
+        for ( var i=0 ; i < scene.children.length ; i++) {
+            var obj = scene.children[i];
+            var k = obj.userData && parseInt( obj.userData.keyframe );
+            if ( k >= 0 ){
+                if ( k in frames ) frames[k].push( obj );
+                else frames[k] = [obj];
+            }
+        }
+        return frames;
+    }
+
+    // Create and return a list of keyframe tracks to animate objects'
+    // visibility depending on which keyframe they appear in.
+    function createTracks( frames ) {
+        var tracks = [];
+        for ( var keyframe=0 ; keyframe < frames.length ; keyframe++ ) {
+            var frame = frames[keyframe];
+            if ( frame ) {
+                // Show during the frame.
+                var times = [keyframe * frameDuration];
+                var values = [true];
+                // For all but the first frame, start off hidden.
+                if ( keyframe > 0 ) {
+                    times.unshift( 0 );
+                    values.unshift( false );
+                }
+                // For all but the last frame, end up hidden.
+                if ( keyframe < frames.length - 1 ) {
+                    times.push( ( keyframe + 1 ) * frameDuration );
+                    values.push( false );
+                }
+                for ( var i=0; i < frame.length ; i++ ) {
+                    var binding = frame[i].uuid + '.visible';
+                    var track = new THREE.BooleanKeyframeTrack( binding, times, values );
+                    tracks.push( track );
+                }
+            }
+        }
+        return tracks;
+    }
+
+    function initUI() {
+
+        ui = document.getElementById( 'animation-ui' );
+
+        initSlider();
+
+        hookupButton( 'play-pause', togglePlayback );
+        hookupButton( 'previous', gotoPreviousFrame );
+        hookupButton( 'next', gotoNextFrame );
+        hookupButton( 'slower', slowDown );
+        hookupButton( 'faster', speedUp );
+        hookupButton( 'toggle-loop', toggleLooping );
+
+        function hookupButton( _class, onclick ) {
+            var button = ui.getElementsByClassName( _class )[0];
+            button.addEventListener( 'click', onclick );
+            return button;
+        }
+
+    }
+
+    function initSlider() {
+
+        slider = ui.getElementsByClassName( 'slider' )[0];
+        slider.value = action.time;
+        slider.setAttribute( 'max', totalDuration );
+        slider.addEventListener( 'change', change );
+        slider.addEventListener( 'input', change );
+        slider.addEventListener( 'mousedown', mousedown );
+        slider.addEventListener( 'mouseup', mouseup );
+        slider.addEventListener( 'keydown', keydown );
+
+        function change() {
+            // Keep animation in sync with position of the knob.
+            seek( parseFloat( slider.value ) );
+        }
+
+        // Temporarily pause playback while the knob is being dragged around.
+        var dragging = false;
+        var wasPlaying = false;
+        function mousedown( event ) {
+            if ( event.button === 0 && !dragging ) {
+                dragging = true;
+                wasPlaying = isPlaying();
+                pause();
+            }
+        }
+        function mouseup( event ) {
+            if ( event.button === 0 && dragging ) {
+                dragging = false;
+                if ( wasPlaying && !isFinished() ) play();
+            }
+        }
+
+        function keydown( event ) {
+            switch ( event.key ) {
+                // Toggle playback using spacebar/enter.
+                case ' ':
+                case 'Enter':
+                    if ( !event.repeat ) {
+                        togglePlayback();
+                        event.preventDefault();
+                    }
+                    break;
+                // Adjust speed using up/down arrows.
+                case 'Down':
+                case 'ArrowDown':
+                    slowDown();
+                    event.preventDefault();
+                    break;
+                case 'Up':
+                case 'ArrowUp':
+                    speedUp();
+                    event.preventDefault();
+                    break;
+                // Navigate frame-by-frame using left/right arrows.
+                case 'Left':
+                case 'ArrowLeft':
+                    gotoPreviousFrame();
+                    event.preventDefault();
+                    break;
+                case 'Right':
+                case 'ArrowRight':
+                    gotoNextFrame();
+                    event.preventDefault();
+                    break;
+            }
+        }
+
+    }
+
+    function isPlaying() {
+        return clock.running;
+    }
+
+    function isFinished() {
+        return action.paused;
+    }
+
+    function play() {
+        if ( isFinished() ) action.reset(); // Return to the beginning.
+        clock.start();
+        updateUI();
+        requestAnimationFrame( render ); // Re-enter render loop.
+    }
+
+    function pause() {
+        clock.stop();
+        updateUI();
+    }
+
+    function togglePlayback() {
+        isPlaying() ? pause() : play();
+    }
+
+    function seek( time ) {
+
+        // Ensure time is in range: [0, totalDuration].
+        time = Math.max( 0, Math.min( totalDuration, time ) );
+        action.time = time;
+
+        // Make sure the animation is treated as finished if set to the very
+        // end of the animation.
+        action.paused = ( !isLooping() && time == totalDuration );
+
+        updateUI();
+
+        if ( !isPlaying() ) {
+            // Ensure the animation gets re-rendered at the new position.
+            requestAnimationFrame( render ); // Trigger a re-render.
+        }
+
+    }
+
+    function moveKeyframes( delta ) {
+        var keyframe = Math.floor( action.time / frameDuration );
+        keyframe += delta;
+        // Ensure keyframe is in range: [0, frameCount].
+        keyframe = Math.max( 0, Math.min( frameCount, keyframe ) );
+        seek( keyframe * frameDuration );
+    }
+
+    function gotoPreviousFrame() {
+        pause();
+        moveKeyframes( -1 );
+    }
+
+    function gotoNextFrame() {
+        pause();
+        moveKeyframes( +1 );
+    }
+
+    function speedUp() {
+        action.timeScale *= 1.25;
+    }
+
+    function slowDown() {
+        action.timeScale /= 1.25;
+    }
+
+    function isLooping() {
+        return action.loop === THREE.LoopRepeat;
+    }
+
+    function setLooping( looping ) {
+        action.loop = looping ? THREE.LoopRepeat : THREE.LoopOnce;
+        updateUI();
+    }
+
+    function toggleLooping() {
+        setLooping( !isLooping() );
+    }
+
+    function update() {
+        mixer.update( clock.getDelta() );
+        updateUI();
+        return clock.running; // Should exit render loop if false.
+    }
+
+    function updateUI() {
+        if ( ui ) {
+            ui.classList.remove( 'playing', 'paused', 'once', 'loop' );
+            ui.classList.add( isPlaying() ? 'playing' : 'paused' );
+            ui.classList.add( isLooping() ? 'loop' : 'once' );
+        }
+        if ( slider ) slider.value = action.time;
+    }
+
+})();
+</script>
+
+
+</body></html>
